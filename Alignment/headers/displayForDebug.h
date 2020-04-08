@@ -1,8 +1,7 @@
 #ifndef DISPLAYFORDEBUG_H
 #define DISPLAYFORDEBUG_H
 
-#include "TYPEDEFS.h"
-#include "PARAMS.h"
+#include "../../PARAMS.h"
 
 #include <stdio.h>
 

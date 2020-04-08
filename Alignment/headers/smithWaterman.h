@@ -1,8 +1,7 @@
 #ifndef SMITHWATERMAN_H
 #define SMITHWATERMAN_H
 
-#include "TYPEDEFS.h"
-#include "PARAMS.h"
+#include "../../PARAMS.h"
 #include "displayForDebug.h"
 
 CELL* smithWaterman(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
