@@ -29,29 +29,29 @@ CELL* smithWaterman(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
 	for (SEQ_INDEX row = 1; row < seqLength; row++) {
 		for (REF_INDEX col = 1; col < refLength; col++) {
 
-//			CELL newCell = generateCell(
-//					&(matrix[coordToAddr(row - 1, col - 1)]),
-//					&(matrix[coordToAddr(row,col - 1)]),
-//					&(matrix[coordToAddr(row - 1,col)]),
-//					ref[col],
-//					seq[row],
-//					(POS) { row, col }
-//			);
-//
-//			if (newCell.value > max) {
-//				maxPos = (POS) { row, col };
-//				max = newCell.value;
-//			}
-//
-//			matrix[coordToAddr(row, col)] = newCell;
+			CELL newCell = generateCell(
+					&(matrix[coordToAddr(row - 1, col - 1)]),
+					&(matrix[coordToAddr(row,col - 1)]),
+					&(matrix[coordToAddr(row - 1,col)]),
+					ref[col],
+					seq[row],
+					(POS) { row, col }
+			);
+
+			if (newCell.value > max) {
+				maxPos = (POS) { row, col };
+				max = newCell.value;
+			}
+
+			matrix[coordToAddr(row, col)] = newCell;
 		}
 	}
 
 	//////////////////
 	//DEBUG PURPOSES//
-//	displayMatrix(ref, refLength, seq, seqLength, matrix);
-//	displayMax(maxPos, max);
-//	displayLL(&(matrix[maxPos.row][maxPos.col]));
+	displayMatrix(ref, refLength, seq, seqLength, matrix);
+	displayMax(maxPos, max);
+	displayLL(&(matrix[coordToAddr(maxPos.row, maxPos.col)]));
 	//////////////////
 
 	return NULL;//&(matrix[maxPos.row][maxPos.col]);

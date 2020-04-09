@@ -1,21 +1,21 @@
 #include "topheaders/initMem.h"
 
-SEQ_INDEX initSeq(BASE* seq){
+SEQ_INDEX initSeq(BASE** seq){
 	SEQ_INDEX seqLength = 10;
 
 	//in stack memory
 	BASE newSeq[seqMax] = {0, 4, 4, 2, 2, 4, 1, 3, 2, 1}; //TEST VECTOR
-	seq = newSeq;
+	*seq = newSeq;
 
 	return seqLength;
 }
 
-REF_INDEX initRef(BASE* ref){
+REF_INDEX initRef(BASE** ref){
 	REF_INDEX refLength = 9; //CHANGE WHEN FILE CHANGES! (length of file + 1)
 
 
 	//in physical memory
-	ref = (BASE *)sds_alloc(refMax * sizeof(BASE));
+	*ref = (BASE *)sds_alloc(refMax * sizeof(BASE));
 
 //	//init ref from file memory:
 //	FILE *fp;
@@ -30,7 +30,7 @@ REF_INDEX initRef(BASE* ref){
 }
 
 
-int initMem(BASE* seq, BASE* ref, SEQ_INDEX* seqL, REF_INDEX* refL){
+int initMem(BASE** seq, BASE** ref, SEQ_INDEX* seqL, REF_INDEX* refL){
 	*seqL = initSeq(seq);
 	*refL = initRef(ref);
 

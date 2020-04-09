@@ -4,6 +4,10 @@ void displayMatrix(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
 		SEQ_INDEX seqLength, CELL matrix[seqMax*refMax]) {
 	printf("\n\r\n\r");
 
+	printf("Length of ref: %i", refLength);
+
+	printf("\n\r\n\r");
+
 	printf("\t\t");
 	for (REF_INDEX i = 0; i < refLength; i++) {
 		if (i == 0)
