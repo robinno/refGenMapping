@@ -16,6 +16,8 @@ typedef uint8_t BASE;		//data type for base (A, C, G or T)
 typedef uint8_t REF_INDEX;	//data type for index of the reference
 typedef uint8_t SEQ_INDEX;	//data type for index of the reference
 
+typedef uint8_t MATRIX_INDEX; //indexing the alignment matrix => ref_index size * seq_index size
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////
 //TYPEDEFS WITHIN ALIGNMENT

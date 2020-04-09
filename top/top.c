@@ -8,7 +8,8 @@ int top(){
 
 	initMem(seq, ref, &seqLength, &refLength);
 
-	smithWaterman(ref, refLength, seq, seqLength);//perform test
+	CELL* addrSpace = initSmithWaterman(ref, refLength, seq, seqLength); //init alignment
+	smithWaterman(ref, refLength, seq, seqLength, addrSpace); //perform SW
 
 	free_memory(ref);
 

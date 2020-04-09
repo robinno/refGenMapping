@@ -13,17 +13,18 @@ SEQ_INDEX initSeq(BASE* seq){
 REF_INDEX initRef(BASE* ref){
 	REF_INDEX refLength = 9; //CHANGE WHEN FILE CHANGES! (length of file + 1)
 
+
 	//in physical memory
 	ref = (BASE *)sds_alloc(refMax * sizeof(BASE));
 
-	//init ref from file memory:
-	FILE *fp;
-	fp = fopen("/mnt/ref.txt", "r");
-	ref[0] = 0; //first element = 0;
-	for(REF_INDEX i = 1; i < refLength; i++){
-		ref[i] = charToBase(fgetc(fp));
-	}
-	fclose(fp);
+//	//init ref from file memory:
+//	FILE *fp;
+//	fp = fopen("/mnt/ref.txt", "r");
+//	ref[0] = 0; //first element = 0;
+//	for(REF_INDEX i = 1; i < refLength; i++){
+//		ref[i] = charToBase(fgetc(fp));
+//	}
+//	fclose(fp);
 
 	return refLength;
 }

@@ -1,7 +1,7 @@
 #include "headers/displayForDebug.h"
 
 void displayMatrix(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
-		SEQ_INDEX seqLength, CELL matrix[seqMax][refMax]) {
+		SEQ_INDEX seqLength, CELL matrix[seqMax*refMax]) {
 	printf("\n\r\n\r");
 
 	printf("\t\t");
@@ -26,7 +26,7 @@ void displayMatrix(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
 			printf("%i\t|\t", seq[i]);
 
 		for (REF_INDEX j = 0; j < refLength; j++) {
-			printf("%i\t", matrix[i][j].value);
+			printf("%i\t", matrix[coordToAddr(i, j)].value);
 		}
 		printf("\n\r");
 	}
