@@ -8,12 +8,12 @@
 #define s 3		//similarity score
 
 //BUFFER SIZES
-#define refMax 15 		//maximum length of the reference genome (BUFFER SIZE)
+#define refMax 6000 		//maximum length of the reference genome (BUFFER SIZE)
 #define seqMax 15		//maximum length of the sequence to match (BUFFER SIZE)
 
 //TYPEDEFS
 typedef uint8_t BASE;		//data type for base (A, C, G or T)
-typedef uint8_t REF_INDEX;	//data type for index of the reference
+typedef uint16_t REF_INDEX;	//data type for index of the reference
 typedef uint8_t SEQ_INDEX;	//data type for index of the reference
 
 typedef uint8_t MATRIX_INDEX; //indexing the alignment matrix => ref_index size * seq_index size
