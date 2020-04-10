@@ -1,7 +1,7 @@
-#include "headers/displayForDebug.h"
+#include "../displayForDebug.h"
 
 void displayMatrix(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
-		SEQ_INDEX seqLength, CELL matrix[seqMax*refMax]) {
+		SEQ_INDEX seqLength, CELL matrix[seqMax * refMax]) {
 	printf("\n\r\n\r");
 
 	printf("Length of ref: %i", refLength);
@@ -46,7 +46,7 @@ void displayLL(CELL* cell) {
 	displayLL(cell->prevCell);
 }
 
-void displayMax(POS maxPos, CELL_VALUE max){
+void displayMax(POS maxPos, CELL_VALUE max) {
 	printf("Position of maximum = row %i, column %i => with maximum %i\n\r\n\r",
-				maxPos.row, maxPos.col, max);
+			maxPos.row, maxPos.col, max);
 }

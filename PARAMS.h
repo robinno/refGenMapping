@@ -18,16 +18,15 @@ typedef uint8_t SEQ_INDEX;	//data type for index of the reference
 
 typedef uint8_t MATRIX_INDEX; //indexing the alignment matrix => ref_index size * seq_index size
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////
 //TYPEDEFS WITHIN ALIGNMENT
 typedef int CELL_VALUE;		//data type for values during the alignment
-typedef struct POS POS;		//data type to keep track of position in alignment matrix
+typedef struct POS POS;	//data type to keep track of position in alignment matrix
 struct POS {
 	SEQ_INDEX row;
 	REF_INDEX col;
 };
-typedef struct CELL CELL;	//data type of a specific cell in the alignment matrix
+typedef struct CELL CELL;//data type of a specific cell in the alignment matrix
 struct CELL {
 	CELL_VALUE value;
 	POS pos;

@@ -1,5 +1,5 @@
-#include "top/topheaders/top.h"
+#include "top/top.h"
 
-int main(int argc, char* argv[]){
+int main(int argc, char* argv[]) {
 	return top();
 }

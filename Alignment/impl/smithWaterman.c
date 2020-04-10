@@ -1,27 +1,21 @@
-#include "headers/smithWaterman.h"
+#include "../smithWaterman.h"
 
-CELL* initSmithWaterman(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
-		SEQ_INDEX seqLength){
-	//INIT MATRIX (in physical memory)
-	CELL* matrix = (CELL *) sds_alloc(sizeof(CELL) * seqMax * refMax);
-
+void initSmithWaterman(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix) {
 	//first row and first column of matrix = 0;
 	for (SEQ_INDEX row = 0; row < seqLength; row++) {
-		matrix[coordToAddr(row,0)].value = 0;
-		matrix[coordToAddr(row,0)].pos = (POS ) { 0, 0 };
-		matrix[coordToAddr(row,0)].prevCell = NULL;
+		matrix[coordToAddr(row, 0)].value = 0;
+		matrix[coordToAddr(row, 0)].pos = (POS ) { 0, 0 };
+		matrix[coordToAddr(row, 0)].prevCell = NULL;
 	}
 	for (REF_INDEX col = 0; col < refLength; col++) {
 		matrix[coordToAddr(0, col)].value = 0;
 		matrix[coordToAddr(0, col)].pos = (POS ) { 0, 0 };
 		matrix[coordToAddr(0, col)].prevCell = NULL;
 	}
-
-	return matrix;
 }
 
 CELL* smithWaterman(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
-		SEQ_INDEX seqLength, CELL matrix[refMax*seqMax]) {
+		SEQ_INDEX seqLength, CELL matrix[refMax * seqMax]) {
 
 	//FILLIN
 	CELL_VALUE max = 0;
@@ -31,15 +25,12 @@ CELL* smithWaterman(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
 
 			CELL newCell = generateCell(
 					&(matrix[coordToAddr(row - 1, col - 1)]),
-					&(matrix[coordToAddr(row,col - 1)]),
-					&(matrix[coordToAddr(row - 1,col)]),
-					ref[col],
-					seq[row],
-					(POS) { row, col }
-			);
+					&(matrix[coordToAddr(row, col - 1)]),
+					&(matrix[coordToAddr(row - 1, col)]), ref[col], seq[row],
+					(POS ) { row, col });
 
 			if (newCell.value > max) {
-				maxPos = (POS) { row, col };
+				maxPos = (POS ) { row, col };
 				max = newCell.value;
 			}
 
@@ -54,7 +45,7 @@ CELL* smithWaterman(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
 	displayLL(&(matrix[coordToAddr(maxPos.row, maxPos.col)]));
 	//////////////////
 
-	return NULL;//&(matrix[maxPos.row][maxPos.col]);
+	return NULL;	//&(matrix[maxPos.row][maxPos.col]);
 }
 
 //FILL THE CURRENT CELL => core of the algorithm
@@ -109,6 +100,6 @@ CELL_VALUE sim(BASE a, BASE b) {
 }
 
 //translating coordinates to address
-MATRIX_INDEX coordToAddr(SEQ_INDEX row, REF_INDEX column){
+MATRIX_INDEX coordToAddr(SEQ_INDEX row, REF_INDEX column) {
 	return (row * seqMax + column);
 }
