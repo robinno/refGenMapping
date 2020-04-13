@@ -7,8 +7,11 @@
 #define seqPath "/mnt/reads.fastq"
 
 FILE* openFileSeqRead();
-int loadNextSeq(FILE* fp, BASE* seq, SEQ_INDEX* seqLength);
+int loadNextSeq(FILE* fp, SEQ_READ* seq);
 void closeFileSeqRead(FILE* fp);
 
-//PRIVATE FUNCTION
+//PRIVATE FUNCTIONS
+int readQName(FILE* fp, SEQ_READ* seq);
+int readSeq(FILE* fp, SEQ_READ* seq);
+int readCertainties(FILE* fp, SEQ_READ* seq);
 int nextLineOfFile(FILE* fp);
