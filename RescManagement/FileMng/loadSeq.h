@@ -11,7 +11,7 @@ int loadNextSeq(FILE* fp, SEQ_READ* seq);
 void closeFileSeqRead(FILE* fp);
 
 //PRIVATE FUNCTIONS
-int readQName(FILE* fp, SEQ_READ* seq);
-int readSeq(FILE* fp, SEQ_READ* seq);
+int readQName(FILE* fp, char* qname);
+int readSeq(FILE* fp, SEQ* seq);
 int readCertainties(FILE* fp, SEQ_READ* seq);
 int nextLineOfFile(FILE* fp);

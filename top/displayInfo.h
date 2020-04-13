@@ -2,4 +2,4 @@
 
 #include "../PARAMS.h"
 
-void displayCurrSeq(SEQ_READ seq);
+void displayCurrSeq(SEQ_READ seq_input);

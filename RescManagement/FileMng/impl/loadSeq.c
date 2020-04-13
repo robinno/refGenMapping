@@ -6,7 +6,7 @@ FILE* openFileSeqRead(){
 	return fp;
 }
 
-int readQName(FILE* fp, SEQ_READ* seq){
+int readQName(FILE* fp, char* qname){
 	fgetc(fp);//skip the first @ in stream
 	int i = 0;
 	char read;
@@ -18,7 +18,7 @@ int readQName(FILE* fp, SEQ_READ* seq){
 			return 255;
 		}
 
-		seq->qname[i] = read;
+		qname[i] = read;
 
 		switch(read){
 			case '\n': //end of line
@@ -38,8 +38,9 @@ int readQName(FILE* fp, SEQ_READ* seq){
 	return 0;
 }
 
-int readSeq(FILE* fp, SEQ_READ* seq){
-	seq->seq[0] = 0; //first element = 0;
+int readSeq(FILE* fp, SEQ* seq){
+
+	seq->el[0] = 0; //first element = 0;
 
 	//Read the sequence
 	int i = 1;
@@ -65,7 +66,7 @@ int readSeq(FILE* fp, SEQ_READ* seq){
 				break;
 			default:
 				if(charToBase(read) > 0){ //valid base
-					seq->seq[i] = charToBase(read);
+					seq->el[i] = charToBase(read);
 					printf("%c", read);
 					i++;
 				}
@@ -73,16 +74,16 @@ int readSeq(FILE* fp, SEQ_READ* seq){
 		}
 	}
 
-	seq->seqLength = i - 1;
+	seq->length = i - 1;
 
 	return 0;
 }
 
-int readCertainties(FILE* fp, SEQ_READ* seq){
+int readCertainties(FILE* fp, SEQ_READ* seq_input){
 	int i = 0;
 	char read;
 	int stoploop = 0;
-	while(stoploop == 0 && i < seq->seqLength){
+	while(stoploop == 0 && i < seq_input->seq.length){
 		read = fgetc(fp);
 
 		if((int) read == 255){//end of file=> would be weird
@@ -90,7 +91,7 @@ int readCertainties(FILE* fp, SEQ_READ* seq){
 			return 255;
 		}
 
-		seq->certainties[i] = read;
+		seq_input->certainties[i] = read;
 
 		switch(read){
 			case '\n': //end of line
@@ -107,22 +108,22 @@ int readCertainties(FILE* fp, SEQ_READ* seq){
 		}
 	}
 
-	if(!(i < seq->seqLength)){
+	if(!(i < seq_input->seq.length)){
 		if(nextLineOfFile(fp) == 255) return 255;
 	}
 
 	return 0;
 }
 
-int loadNextSeq(FILE* fp, SEQ_READ* seq){
+int loadNextSeq(FILE* fp, SEQ_READ* seq_input){
 
-	if(readQName(fp, seq) == 255) return 255;
-	if(readSeq(fp, seq) == 255) return 255;
+	if(readQName(fp, seq_input->qname) == 255) return 255;
+	if(readSeq(fp, &(seq_input->seq)) == 255) return 255;
 	if(nextLineOfFile(fp) == 255) return 255;
-	if(readCertainties(fp, seq) == 255) return 255;
+	if(readCertainties(fp, seq_input) == 255) return 255;
 
 	//display info on screen
-	printf("length of the loaded sequence = %i\n", seq->seqLength);
+	printf("length of the loaded sequence = %i\n", seq_input->seq.length);
 
 	return 0;
 }
