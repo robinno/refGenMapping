@@ -29,7 +29,6 @@ int top() {
 //	initSmithWaterman(refLength, seqLength, addrSpaceMatrix); //init alignment matrix
 //	smithWaterman(ref, refLength, seq, seqLength, addrSpaceMatrix); //perform SW
 
-
 	/////////////////////////////////
 
 	//CLOSE THE FILES

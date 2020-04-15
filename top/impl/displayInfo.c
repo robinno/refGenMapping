@@ -1,6 +1,13 @@
 #include "../displayInfo.h"
 
-void displayCurrSeq(FASTQ_LINE fastqLine){
+void displayFASTAline(FASTA_LINE fastaLine){
+	printf("the reference genome:\n");
+	printf("Rname: %s\n", fastaLine.Rname);
+	printf("length of reference: %i\n", fastaLine.ref.length);
+	printf("\n");
+}
+
+void displayCurrFASTQline(FASTQ_LINE fastqLine){
 	printf("The current sequence:\n");
 	printf("Qname: %s\n", fastqLine.Qname);
 	printf("Sequence: \t");

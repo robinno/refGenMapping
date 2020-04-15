@@ -8,7 +8,7 @@ int readNextFastqLine(FILE* fp, FASTQ_LINE* fastQLine){
 	if(readQualities(fp, fastQLine) == 255) return 255;
 
 	//display info on screen
-	printf("length of the loaded sequence = %i\n", fastQLine->seq.length);
+	//printf("length of the loaded sequence = %i\n", fastQLine->seq.length);
 
 	return 0;
 }
@@ -21,7 +21,7 @@ int readQName(FILE* fp, char* qname){
 	while(stoploop == 0){
 		read = fgetc(fp);
 		if((int) read == 255){//end of file
-			printf("\nfile finished\n");
+			//printf("\nfile finished\n");
 			return 255;
 		}
 
@@ -57,7 +57,7 @@ int readSeq(FILE* fp, SEQ* seq){
 		read = fgetc(fp);
 
 		if((int) read == 255){//end of file
-			printf("\nfile finished\n");
+			//printf("\nfile finished\n");
 			return 255;
 		}
 
@@ -74,7 +74,7 @@ int readSeq(FILE* fp, SEQ* seq){
 			default:
 				if(charToBase(read) > 0){ //valid base
 					seq->el[i] = charToBase(read);
-					printf("%c", read);
+					//printf("%c", read);
 					i++;
 				}
 				break;
@@ -93,8 +93,8 @@ int readQualities(FILE* fp, FASTQ_LINE* fastQLine){
 	while(stoploop == 0 && i < fastQLine->seq.length){
 		read = fgetc(fp);
 
-		if((int) read == 255){//end of file=> would be weird
-			printf("\nfile finished\n");
+		if((int) read == 255){//end of file
+			//printf("\nfile finished\n");
 			return 255;
 		}
 
@@ -130,7 +130,7 @@ int nextLineOfFile(FILE* fp){
 
 	while(read != '\n'){
 		if((int) read == 255){
-			printf("file finished\n");
+			//printf("file finished\n");
 			return 255;
 		}
 
