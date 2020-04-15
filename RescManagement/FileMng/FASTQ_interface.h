@@ -4,14 +4,12 @@
 #include "../../PARAMS.h"
 #include "functions.h" //for the charToBase function
 
-#define seqPath "/mnt/reads.fastq"
-
-FILE* openFileSeqRead();
-int loadNextSeq(FILE* fp, SEQ_READ* seq);
-void closeFileSeqRead(FILE* fp);
+FILE* openFastqFile();
+int readNextFastqLine(FILE* fp, FASTQ_LINE* line);
+void closeFastqFile(FILE* fp);
 
 //PRIVATE FUNCTIONS
 int readQName(FILE* fp, char* qname);
 int readSeq(FILE* fp, SEQ* seq);
-int readCertainties(FILE* fp, SEQ_READ* seq);
+int readQualities(FILE* fp, FASTQ_LINE* line);
 int nextLineOfFile(FILE* fp);

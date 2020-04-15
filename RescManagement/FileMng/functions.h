@@ -4,5 +4,6 @@
 #include "../../PARAMS.h"
 
 BASE charToBase(char c);
+char baseToChar(BASE base);
 
 #endif

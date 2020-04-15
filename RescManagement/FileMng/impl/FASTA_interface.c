@@ -1,8 +1,8 @@
-#include "../loadRef.h"
+#include "../FASTA_interface.h"
 
 REF_INDEX loadRef(BASE* ref) {
 
-	FILE* refFile = openRefFile();
+	FILE* refFile = openFASTQFile();
 	displayGenomeInfo(refFile); //also serves the purpose of skipping the first line in the genome file
 
 	REF_INDEX refLength = loadRefData(refFile, ref);
@@ -13,10 +13,14 @@ REF_INDEX loadRef(BASE* ref) {
 	return refLength;
 }
 
-FILE* openRefFile() {
+FILE* openFASTQFile() {
 	FILE *fp;
-	fp = fopen(refPath, "r");
+	fp = fopen(fastaPath, "r");
 	return fp;
+}
+
+void closeFASTQFile(FILE* fp) {
+	fclose(fp);
 }
 
 void displayGenomeInfo(FILE* fp) { //=first line of file
@@ -68,6 +72,3 @@ void displayRefLoadInfo(REF_INDEX refLength) {
 	}
 }
 
-void closeRefFile(FILE* fp) {
-	fclose(fp);
-}

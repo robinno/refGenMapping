@@ -6,16 +6,14 @@
 #include "../../PARAMS.h"
 #include "functions.h" //for the charToBase function
 
-#define refPath "/mnt/genome.fasta"
-
 REF_INDEX loadRef(BASE* ref);
 
 //PRIVATE FUNCTIONS:
-FILE* openRefFile();
+FILE* openFASTQFile();
 void displayGenomeInfo(FILE* fp);
 REF_INDEX loadRefData(FILE* fp, BASE* ref);
 void displayRefLoadInfo(REF_INDEX refLength);
-void closeRefFile(FILE* fp);
+void closeFASTQFile(FILE* fp);
 
 
 

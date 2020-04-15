@@ -1,9 +1,27 @@
-#include "../loadSeq.h"
+#include "../FASTQ_interface.h"
 
-FILE* openFileSeqRead(){
+FILE* openFastqFile(){
 	FILE *fp;
-	fp = fopen(seqPath, "r");
+	fp = fopen(fastQPath, "r");
 	return fp;
+}
+
+void closeFastqFile(FILE* fp){
+	//close file again
+	fclose(fp);
+}
+
+int readNextFastqLine(FILE* fp, FASTQ_LINE* line){
+
+	if(readQName(fp, line->qname) == 255) return 255;
+	if(readSeq(fp, &(line->seq)) == 255) return 255;
+	if(nextLineOfFile(fp) == 255) return 255;
+	if(readCertainties(fp, line) == 255) return 255;
+
+	//display info on screen
+	printf("length of the loaded sequence = %i\n", seq_input->seq.length);
+
+	return 0;
 }
 
 int readQName(FILE* fp, char* qname){
@@ -79,7 +97,7 @@ int readSeq(FILE* fp, SEQ* seq){
 	return 0;
 }
 
-int readCertainties(FILE* fp, SEQ_READ* seq_input){
+int readQualities(FILE* fp, FASTQ_LINE* line){
 	int i = 0;
 	char read;
 	int stoploop = 0;
@@ -113,24 +131,6 @@ int readCertainties(FILE* fp, SEQ_READ* seq_input){
 	}
 
 	return 0;
-}
-
-int loadNextSeq(FILE* fp, SEQ_READ* seq_input){
-
-	if(readQName(fp, seq_input->qname) == 255) return 255;
-	if(readSeq(fp, &(seq_input->seq)) == 255) return 255;
-	if(nextLineOfFile(fp) == 255) return 255;
-	if(readCertainties(fp, seq_input) == 255) return 255;
-
-	//display info on screen
-	printf("length of the loaded sequence = %i\n", seq_input->seq.length);
-
-	return 0;
-}
-
-void closeFileSeqRead(FILE* fp){
-	//close file again
-	fclose(fp);
 }
 
 int nextLineOfFile(FILE* fp){
