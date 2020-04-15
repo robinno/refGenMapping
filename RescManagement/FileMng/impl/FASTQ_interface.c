@@ -1,16 +1,5 @@
 #include "../FASTQ_interface.h"
 
-FILE* openFastqFile(){
-	FILE *fp;
-	fp = fopen(fastQPath, "r");
-	return fp;
-}
-
-void closeFastqFile(FILE* fp){
-	//close file again
-	fclose(fp);
-}
-
 int readNextFastqLine(FILE* fp, FASTQ_LINE* fastQLine){
 
 	if(readQName(fp, fastQLine->Qname) == 255) return 255;

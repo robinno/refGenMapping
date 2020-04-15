@@ -7,15 +7,6 @@ void initSamLine(SAM_LINE* samLine){
 	samLine->Tlen = 0;
 }
 
-FILE* openSamFile(){
-	FILE* fp = fopen(samPath, "w+");
-	return fp;
-}
-
-void closeSamFile(FILE* fp){
-	fclose(fp);
-}
-
 void displaySamLine(SAM_LINE samLine){
 
 	printf("%s\t", samLine.fastQLine.Qname);

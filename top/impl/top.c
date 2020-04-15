@@ -15,11 +15,10 @@ int top() {
 	loadRef(fastaPath, &fastaLine);
 
 	//OPEN THE FILES:
-	FILE* fastQfile = openFastqFile();
-	FILE* samFile = openSamFile();
+	FILE* fastQfile = fopen(fastQPath, "r");
+	FILE* samFile = fopen(samPath, "w+");
 
 	/////////////////////////////////
-
 
 	int allReadsDone = 0;
 	do{
@@ -34,8 +33,8 @@ int top() {
 	/////////////////////////////////
 
 	//CLOSE THE FILES
-	closeFastqFile(fastQfile);
-	closeSamFile(samFile);
+	fclose(fastQfile);
+	fclose(samFile);
 
 	//FREE THE MEMORY
 	sds_free(fastQLine.seq.el);
