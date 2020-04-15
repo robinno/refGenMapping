@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-#include "../PARAMS.h"
+#include "../TYPES.h"
 
 void displayMatrix(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
 		SEQ_INDEX seqLength, CELL matrix[seqMax * refMax]);

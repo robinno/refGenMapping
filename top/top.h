@@ -1,6 +1,7 @@
 #ifndef TOP_H
 #define TOP_H
 
+//for the files
 #include "../RescManagement/FileMng/FASTA_interface.h"
 #include "../RescManagement/FileMng/FASTQ_interface.h"
 #include "../RescManagement/FileMng/SAM_interface.h"
@@ -11,6 +12,8 @@
 #include "displayInfo.h"							//for feedback to the user via command line
 
 #include "../PARAMS.h"								//including the parameters
+#include "../TYPES.h"								//including the types
+
 #include "../Alignment/smithWaterman.h" 			//for the alignment
 #include "../RescManagement/MemoryMng/initMem.h"	//to initialize memory
 

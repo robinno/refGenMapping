@@ -1,7 +1,7 @@
 #ifndef FUNCTIONS_H
 #define FUNCTIONS_H
 
-#include "../../PARAMS.h"
+#include "../../TYPES.h"
 
 BASE charToBase(char c);
 char baseToChar(BASE base);

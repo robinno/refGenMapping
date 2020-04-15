@@ -3,6 +3,7 @@
 
 #include "displayForDebug.h"
 #include "../PARAMS.h"
+#include "../TYPES.h"
 #include "sds_lib.h" //for sds_alloc function
 
 void initSmithWaterman(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix);

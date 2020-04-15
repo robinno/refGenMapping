@@ -2,6 +2,7 @@
 #define INITMEM_H
 
 #include "../../PARAMS.h"
+#include "../../TYPES.h"
 
 #include "sds_lib.h" //for sds_alloc function
 

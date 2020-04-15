@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../../PARAMS.h"
-#include "functions.h" //for the charToBase function
+#include "../../TYPES.h"
+#include "ConversionFunctions.h" //for the charToBase function
 
 FILE* openFastqFile();
 int readNextFastqLine(FILE* fp, FASTQ_LINE* fastQLine);

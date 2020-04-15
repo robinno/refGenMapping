@@ -3,8 +3,9 @@
 
 #include <stdio.h> //for reading files
 
-#include "../../PARAMS.h"
-#include "functions.h" //for the charToBase function
+#include "../../TYPES.h"
+#include "ConversionFunctions.h" //for the charToBase function
+
 
 void loadRef(char* filePath, FASTA_LINE* fastaLine);
 

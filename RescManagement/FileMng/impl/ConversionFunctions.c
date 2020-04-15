@@ -1,4 +1,4 @@
-#include "../functions.h"
+#include "../ConversionFunctions.h"
 
 BASE charToBase(char c) {
 	switch (c) {

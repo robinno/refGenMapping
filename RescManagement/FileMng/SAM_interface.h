@@ -2,7 +2,7 @@
 #include <string.h>
 
 #include "../../PARAMS.h"
-#include "functions.h"
+#include "ConversionFunctions.h"
 
 void initSamLine(SAM_LINE* samLine);
 
