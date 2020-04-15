@@ -6,15 +6,11 @@
 #include "../../PARAMS.h"
 #include "functions.h" //for the charToBase function
 
-REF_INDEX loadRef(BASE* ref);
+void loadRef(char* filePath, FASTA_LINE* fastaLine);
 
-//PRIVATE FUNCTIONS:
-FILE* openFASTQFile();
-void displayGenomeInfo(FILE* fp);
-REF_INDEX loadRefData(FILE* fp, BASE* ref);
-void displayRefLoadInfo(REF_INDEX refLength);
-void closeFASTQFile(FILE* fp);
-
+//private functions
+void loadGenomeInfo(FILE* fp, char* qname);
+void loadRefData(FILE* fp, REF* ref);
 
 
 #endif

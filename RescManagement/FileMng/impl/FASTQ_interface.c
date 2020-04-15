@@ -11,15 +11,15 @@ void closeFastqFile(FILE* fp){
 	fclose(fp);
 }
 
-int readNextFastqLine(FILE* fp, FASTQ_LINE* line){
+int readNextFastqLine(FILE* fp, FASTQ_LINE* fastQLine){
 
-	if(readQName(fp, line->qname) == 255) return 255;
-	if(readSeq(fp, &(line->seq)) == 255) return 255;
+	if(readQName(fp, fastQLine->Qname) == 255) return 255;
+	if(readSeq(fp, &(fastQLine->seq)) == 255) return 255;
 	if(nextLineOfFile(fp) == 255) return 255;
-	if(readCertainties(fp, line) == 255) return 255;
+	if(readQualities(fp, fastQLine) == 255) return 255;
 
 	//display info on screen
-	printf("length of the loaded sequence = %i\n", seq_input->seq.length);
+	printf("length of the loaded sequence = %i\n", fastQLine->seq.length);
 
 	return 0;
 }
@@ -97,11 +97,11 @@ int readSeq(FILE* fp, SEQ* seq){
 	return 0;
 }
 
-int readQualities(FILE* fp, FASTQ_LINE* line){
+int readQualities(FILE* fp, FASTQ_LINE* fastQLine){
 	int i = 0;
 	char read;
 	int stoploop = 0;
-	while(stoploop == 0 && i < seq_input->seq.length){
+	while(stoploop == 0 && i < fastQLine->seq.length){
 		read = fgetc(fp);
 
 		if((int) read == 255){//end of file=> would be weird
@@ -109,7 +109,10 @@ int readQualities(FILE* fp, FASTQ_LINE* line){
 			return 255;
 		}
 
-		seq_input->certainties[i] = read;
+		if(read == ' ')
+			read = '\0';
+
+		fastQLine->qualities[i] = read;
 
 		switch(read){
 			case '\n': //end of line
@@ -126,7 +129,7 @@ int readQualities(FILE* fp, FASTQ_LINE* line){
 		}
 	}
 
-	if(!(i < seq_input->seq.length)){
+	if(!(i < fastQLine->seq.length)){
 		if(nextLineOfFile(fp) == 255) return 255;
 	}
 

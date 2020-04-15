@@ -1,74 +1,48 @@
 #include "../FASTA_interface.h"
 
-REF_INDEX loadRef(BASE* ref) {
+void loadRef(char* filePath, FASTA_LINE* fastaLine) {
 
-	FILE* refFile = openFASTQFile();
-	displayGenomeInfo(refFile); //also serves the purpose of skipping the first line in the genome file
+	FILE* refFile = fopen(filePath, "r");
 
-	REF_INDEX refLength = loadRefData(refFile, ref);
+	loadGenomeInfo(refFile, fastaLine->Rname);
+	loadRefData(refFile, &(fastaLine->ref));
 
-	displayRefLoadInfo(refLength);
-	closeRefFile(refFile);
-
-	return refLength;
+	fclose(refFile);
 }
 
-FILE* openFASTQFile() {
-	FILE *fp;
-	fp = fopen(fastaPath, "r");
-	return fp;
-}
-
-void closeFASTQFile(FILE* fp) {
-	fclose(fp);
-}
-
-void displayGenomeInfo(FILE* fp) { //=first line of file
-	char buff[255];
+void loadGenomeInfo(FILE* fp, char* qname) { //=first line of file
+	fgetc(fp);//skip the first @ in stream
 	int i = 0;
-	char read = ' ';
-	read = fgetc(fp);
-	do {
-		buff[i] = read;
-		i++;
+	char read;
+	int stoploop = 0;
+	while(stoploop == 0){
 		read = fgetc(fp);
-	} while (read != '\n');
 
-	while (i < 255) {
-		buff[i] = '\0';
-		i++;
+		if(read == ' ' || read == '\n'){
+			while(read != '\n'){ //Get to next line of stream if it was a space
+				read = fgetc(fp);
+			}
+			qname[i] = '\0';
+			return;
+		}else{
+			qname[i] = read;
+			i++;
+		}
 	}
-
-	printf("GENOME: %s\n", buff);
 }
 
-REF_INDEX loadRefData(FILE* fp, BASE* ref) {
-	ref[0] = 0; //first element = 0;
+void loadRefData(FILE* fp, REF* ref) {
+	ref->el[0] = 0; //first element = 0;
 
 	//read the file
-	REF_INDEX i = 1;
+	ref->length = 1;
 	char read = fgetc(fp);
 	do {
 		if (charToBase(read) > 0) { //Valid base, no weird char like newline or space
-			ref[i] = charToBase(read);
-			i++;
+			ref->el[ref->length] = charToBase(read);
+			ref->length++;
 		}
-
-		//printf("%c", read); 	//debug purposes
 		read = fgetc(fp); 			//move on to next char
-
 	} while (((int) read) != 255); //end of the file
-
-	return i - 1; //= length of ref genome
-}
-
-void displayRefLoadInfo(REF_INDEX refLength) {
-	printf("\nlength of the ref = %i\n", refLength);
-
-	if (refLength >= refMax) {
-		printf("WARNING: size of buff for genome (ref) may be to small\n");
-	} else {
-		printf("Genome loaded successfully\n");
-	}
 }
 

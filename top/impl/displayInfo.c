@@ -2,7 +2,7 @@
 
 void displayCurrSeq(FASTQ_LINE fastqLine){
 	printf("The current sequence:\n");
-	printf("Qname: %s\n", fastqLine.qname);
+	printf("Qname: %s\n", fastqLine.Qname);
 	printf("Sequence: \t");
 	for(SEQ_INDEX i = 0; i < fastqLine.seq.length; i++){
 		printf("%i", fastqLine.seq.el[i]);

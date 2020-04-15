@@ -1,32 +1,45 @@
 #include "../top.h"
 
 int top() {
-	SEQ_READ seq_input;
+	FASTQ_LINE fastQLine;
+	FASTA_LINE fastaLine;
+	SAM_LINE samLine;
 
-	BASE *ref = 0;
+	//RESERVE MEMORY
+	initSeq(&(fastQLine.seq.el));
+	initRef(&(fastaLine.ref.el));
 	CELL *addrSpaceMatrix = 0;
-
-	initSeq(&(seq_input.seq.el));
-	initRef(&ref);
 	initAlignMatrixAddrSpace(&addrSpaceMatrix);
 
-	REF_INDEX refLength = loadRef(ref);
+	//LOAD THE REF
+	loadRef(fastaPath, &fastaLine);
 
-	FILE* seqFastQFile = openFileSeqRead();
+	//OPEN THE FILES:
+	FILE* fastQfile = openFastqFile();
+	FILE* samFile = openSamFile();
+
+	/////////////////////////////////
+
 
 	int allReadsDone = 0;
 	do{
-		allReadsDone = loadNextSeq(seqFastQFile, &seq_input);
-		displayCurrSeq(seq_input);
+		allReadsDone = readNextFastqLine(fastQfile, &fastQLine);
+		displayCurrSeq(fastQLine);
 	}while(allReadsDone != 255);
 
 //	initSmithWaterman(refLength, seqLength, addrSpaceMatrix); //init alignment matrix
 //	smithWaterman(ref, refLength, seq, seqLength, addrSpaceMatrix); //perform SW
 
-	closeFileSeqRead(seqFastQFile);
 
-	sds_free(seq_input.seq.el);
-	sds_free(ref);
+	/////////////////////////////////
+
+	//CLOSE THE FILES
+	closeFastqFile(fastQfile);
+	closeSamFile(samFile);
+
+	//FREE THE MEMORY
+	sds_free(fastQLine.seq.el);
+	sds_free(fastaLine.ref.el);
 	sds_free(addrSpaceMatrix);
 
 	return 0;

@@ -13,8 +13,9 @@
 #define s 3		//similarity score
 
 //BUFFER SIZES
-#define refMax 6000 		//maximum length of the reference genome (BUFFER SIZE)
+#define refMax 6000 	//maximum length of the reference genome (BUFFER SIZE)
 #define seqMax 150		//maximum length of the sequence to match (BUFFER SIZE)
+#define buffSize 64		//for character buffers (strings)
 
 //TYPEDEFS
 typedef uint8_t BASE;		//data type for base (A, C, G or T)
