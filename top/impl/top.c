@@ -31,7 +31,9 @@ int top() {
 		displayCurrFASTQline(fastQLine);
 
 		//PERFORM MAPPING
-		FillInMatrix(fastaLine.ref, fastQLine.seq, addrSpaceMatrix);
+		CELL* maxCell = FillInMatrix(fastaLine.ref, fastQLine.seq, addrSpaceMatrix);
+
+		generateCIGAR(samLine.CIGAR, maxCell);
 
 		samLine.fastQLine = fastQLine;
 		displayCurrSAMline(samLine);

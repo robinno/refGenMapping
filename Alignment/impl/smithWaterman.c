@@ -19,15 +19,15 @@ CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
 	//FILLIN
 	CELL_VALUE max = 0;
 	POS maxPos; //position of the maximum value in the matrix
-	for (SEQ_INDEX row = 1; row < seq.length; row++) {
-		for (REF_INDEX col = 1; col < ref.length; col++) {
+	for (SEQ_INDEX row = 1; row <= seq.length; row++) {
+		for (REF_INDEX col = 1; col <= ref.length; col++) {
 
 			CELL newCell = generateCell(
 					&(matrix[coordToAddr(row - 1, col - 1)]),
 					&(matrix[coordToAddr(row, col - 1)]),
 					&(matrix[coordToAddr(row - 1, col)]),
-					ref.el[col],
-					seq.el[row],
+					ref.el[col-1],
+					seq.el[row-1],
 					(POS ) { row, col });
 
 			if (newCell.value > max) {
@@ -46,13 +46,13 @@ CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
 	displayLL(&(matrix[coordToAddr(maxPos.row, maxPos.col)]));
 	//////////////////
 
-	return NULL;	//&(matrix[maxPos.row][maxPos.col]);
+	return &(matrix[coordToAddr(maxPos.row, maxPos.col)]);
 }
 
-char* generateCIGAR(CELL* LL){
+void generateCIGAR(char* CIGAR, CELL* LL){
 	SEQ_INDEX counter = 0;
 	char currentDirection = 'M';
-	char* CIGAR;
+	CIGAR[0] = '\0'; //reset the string
 
 	while(LL->prevCell != NULL){
 		POS prevPos = LL->prevCell->pos;
@@ -107,8 +107,6 @@ char* generateCIGAR(CELL* LL){
 	sprintf(newCIGAR, "%i%c", counter, currentDirection);
 	strcat(newCIGAR, CIGAR);
 	CIGAR = newCIGAR;
-
-	return CIGAR;
 }
 
 //FILL THE CURRENT CELL => core of the algorithm
@@ -164,5 +162,5 @@ CELL_VALUE sim(BASE a, BASE b) {
 
 //translating coordinates to address
 MATRIX_INDEX coordToAddr(SEQ_INDEX row, REF_INDEX column) {
-	return (row * seqMax + column);
+	return (row * refMax + column);
 }

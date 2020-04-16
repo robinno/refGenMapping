@@ -40,17 +40,17 @@ int readQName(FILE* fp, char* qname){
 				i++;
 				break;
 		}
+
+		if(stoploop == 1)
+			qname[i] = '\0';
 	}
 
 	return 0;
 }
 
 int readSeq(FILE* fp, SEQ* seq){
-
-	seq->el[0] = 0; //first element = 0;
-
 	//Read the sequence
-	int i = 1;
+	int i = 0;
 	char read;
 	int stoploop = 0;
 	while(stoploop == 0){

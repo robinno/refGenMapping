@@ -8,27 +8,27 @@ void displayMatrix(REF ref, SEQ seq, CELL matrix[seqMax * refMax]) {
 	printf("\n\r\n\r");
 
 	printf("\t\t");
-	for (REF_INDEX i = 0; i < ref.length && i < 10; i++) {
-		if (i == 0)
+	for (REF_INDEX i = 0; i <= ref.length && i < 10; i++) {
+		if(i == 0)
 			printf("\t");
 		else
-			printf("%i\t", ref.el[i]);
+			printf("%i\t", ref.el[i-1]);
 	}
 	printf("\n\r");
 
-	printf("\t\t");
-	for (REF_INDEX i = 0; i < ref.length && i < 10; i++) {
+	printf("\t");
+	for (REF_INDEX i = 0; i <= ref.length && i < 10; i++) {
 		printf("--------");
 	}
 	printf("\n\r");
 
-	for (SEQ_INDEX i = 0; i < seq.length && i < 10; i++) {
+	for (SEQ_INDEX i = 0; i <= seq.length && i < 10; i++) {
 		if (i == 0)
 			printf("\t|\t");
 		else
-			printf("%i\t|\t", seq.el[i]);
+			printf("%i\t|\t", seq.el[i - 1]);
 
-		for (REF_INDEX j = 0; j < ref.length && j < 10; j++) {
+		for (REF_INDEX j = 0; j <= ref.length && j < 10; j++) {
 			printf("%i\t", matrix[coordToAddr(i, j)].value);
 		}
 		printf("\n\r");

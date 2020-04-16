@@ -32,10 +32,8 @@ void loadGenomeInfo(FILE* fp, char* qname) { //=first line of file
 }
 
 void loadRefData(FILE* fp, REF* ref) {
-	ref->el[0] = 0; //first element = 0;
-
 	//read the file
-	ref->length = 1;
+	ref->length = 0;
 	char read = fgetc(fp);
 	do {
 		if (charToBase(read) > 0) { //Valid base, no weird char like newline or space
@@ -43,6 +41,6 @@ void loadRefData(FILE* fp, REF* ref) {
 			ref->length++;
 		}
 		read = fgetc(fp); 			//move on to next char
-	} while (((int) read) != 255); //end of the file
+	} while (((int) read) != 255); 	//end of the file
 }
 

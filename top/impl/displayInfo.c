@@ -36,7 +36,7 @@ void displayCurrSAMline(SAM_LINE samLine){
 	for(SEQ_INDEX i = 0; i < samLine.fastQLine.seq.length; i++){
 		printf("%c", samLine.fastQLine.qualities[i]);
 	}
-
+	printf("\n");
 	printf("Flag: %i\n", samLine.Flag);
 	printf("Position found: %i\n", samLine.Pos);
 	printf("Mapping qualitiy: %i\n", samLine.MapQ);
