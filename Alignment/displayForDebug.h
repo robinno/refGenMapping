@@ -5,8 +5,7 @@
 
 #include "../TYPES.h"
 
-void displayMatrix(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
-		SEQ_INDEX seqLength, CELL matrix[seqMax * refMax]);
+void displayMatrix(REF ref, SEQ seq, CELL matrix[seqMax * refMax]);
 void displayLL(CELL* cell);
 void displayMax(POS maxPos, CELL_VALUE max);
 

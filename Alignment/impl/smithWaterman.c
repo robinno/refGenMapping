@@ -1,32 +1,33 @@
 #include "../smithWaterman.h"
 
-void initSmithWaterman(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix) {
+void initMatrix(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix) {
 	//first row and first column of matrix = 0;
 	for (SEQ_INDEX row = 0; row < seqLength; row++) {
 		matrix[coordToAddr(row, 0)].value = 0;
-		matrix[coordToAddr(row, 0)].pos = (POS ) { 0, 0 };
+		matrix[coordToAddr(row, 0)].pos = (POS ) { row, 0 };
 		matrix[coordToAddr(row, 0)].prevCell = NULL;
 	}
 	for (REF_INDEX col = 0; col < refLength; col++) {
 		matrix[coordToAddr(0, col)].value = 0;
-		matrix[coordToAddr(0, col)].pos = (POS ) { 0, 0 };
+		matrix[coordToAddr(0, col)].pos = (POS ) { 0, col };
 		matrix[coordToAddr(0, col)].prevCell = NULL;
 	}
 }
 
-CELL* smithWaterman(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
-		SEQ_INDEX seqLength, CELL matrix[refMax * seqMax]) {
+CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
 
 	//FILLIN
 	CELL_VALUE max = 0;
 	POS maxPos; //position of the maximum value in the matrix
-	for (SEQ_INDEX row = 1; row < seqLength; row++) {
-		for (REF_INDEX col = 1; col < refLength; col++) {
+	for (SEQ_INDEX row = 1; row < seq.length; row++) {
+		for (REF_INDEX col = 1; col < ref.length; col++) {
 
 			CELL newCell = generateCell(
 					&(matrix[coordToAddr(row - 1, col - 1)]),
 					&(matrix[coordToAddr(row, col - 1)]),
-					&(matrix[coordToAddr(row - 1, col)]), ref[col], seq[row],
+					&(matrix[coordToAddr(row - 1, col)]),
+					ref.el[col],
+					seq.el[row],
 					(POS ) { row, col });
 
 			if (newCell.value > max) {
@@ -40,12 +41,74 @@ CELL* smithWaterman(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
 
 	//////////////////
 	//DEBUG PURPOSES//
-	displayMatrix(ref, refLength, seq, seqLength, matrix);
+	displayMatrix(ref, seq, matrix);
 	displayMax(maxPos, max);
 	displayLL(&(matrix[coordToAddr(maxPos.row, maxPos.col)]));
 	//////////////////
 
 	return NULL;	//&(matrix[maxPos.row][maxPos.col]);
+}
+
+char* generateCIGAR(CELL* LL){
+	SEQ_INDEX counter = 0;
+	char currentDirection = 'M';
+	char* CIGAR;
+
+	while(LL->prevCell != NULL){
+		POS prevPos = LL->prevCell->pos;
+		POS currPos = LL->pos;
+
+		if(prevPos.col == currPos.col - 1 && prevPos.row == currPos.row - 1){//diagonal = match
+			if(currentDirection == 'M'){
+				counter++;
+			}else{
+				//write in buffer
+				char newCIGAR[buffSize];
+				sprintf(newCIGAR, "%i%c", counter, currentDirection);
+				strcat(newCIGAR, CIGAR);
+				CIGAR = newCIGAR;
+
+				counter = 1;
+				currentDirection = 'M';
+			}
+		} else if(prevPos.col == currPos.col && prevPos.row == currPos.row - 1){//up = insertion
+			if(currentDirection == 'I'){
+				counter++;
+			}else{
+				//write in buffer
+				char newCIGAR[buffSize];
+				sprintf(newCIGAR, "%i%c", counter, currentDirection);
+				strcat(newCIGAR, CIGAR);
+				CIGAR = newCIGAR;
+
+				counter = 1;
+				currentDirection = 'I';
+						}
+		} else {//left = deletion
+			if(currentDirection == 'D'){
+				counter++;
+			}else{
+				//write in buffer
+				char newCIGAR[buffSize];
+				sprintf(newCIGAR, "%i%c", counter, currentDirection);
+				strcat(newCIGAR, CIGAR);
+				CIGAR = newCIGAR;
+
+				counter = 1;
+				currentDirection = 'D';
+			}
+		}
+
+		LL = LL->prevCell;
+	}
+
+	//write last counted part also in string
+	char newCIGAR[buffSize];
+	sprintf(newCIGAR, "%i%c", counter, currentDirection);
+	strcat(newCIGAR, CIGAR);
+	CIGAR = newCIGAR;
+
+	return CIGAR;
 }
 
 //FILL THE CURRENT CELL => core of the algorithm

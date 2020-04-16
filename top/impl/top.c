@@ -13,21 +13,30 @@ int top() {
 
 	//LOAD THE REF
 	loadRef(fastaPath, &fastaLine);
+	displayFASTAline(fastaLine);
+	samLine.fastALine = fastaLine;
 
 	//OPEN THE FILES:
 	FILE* fastQfile = fopen(fastQPath, "r");
 	FILE* samFile = fopen(samPath, "w+");
 
+	//INIT THE SW MATRIX:
+	initMatrix(refMax, seqMax, addrSpaceMatrix);
+
 	/////////////////////////////////
 
 	int allReadsDone = 0;
-	do{
+	do {
 		allReadsDone = readNextFastqLine(fastQfile, &fastQLine);
-		displayCurrSeq(fastQLine);
-	}while(allReadsDone != 255);
+		displayCurrFASTQline(fastQLine);
 
-//	initSmithWaterman(refLength, seqLength, addrSpaceMatrix); //init alignment matrix
-//	smithWaterman(ref, refLength, seq, seqLength, addrSpaceMatrix); //perform SW
+		//PERFORM MAPPING
+		FillInMatrix(fastaLine.ref, fastQLine.seq, addrSpaceMatrix);
+
+		samLine.fastQLine = fastQLine;
+		displayCurrSAMline(samLine);
+		writeSamLine(samFile, samLine);
+	} while (allReadsDone != 255);
 
 	/////////////////////////////////
 

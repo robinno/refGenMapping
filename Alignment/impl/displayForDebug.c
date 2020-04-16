@@ -1,35 +1,34 @@
 #include "../displayForDebug.h"
 
-void displayMatrix(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
-		SEQ_INDEX seqLength, CELL matrix[seqMax * refMax]) {
+void displayMatrix(REF ref, SEQ seq, CELL matrix[seqMax * refMax]) {
 	printf("\n\r\n\r");
 
-	printf("Length of ref: %i", refLength);
+	printf("Length of ref: %i", ref.length);
 
 	printf("\n\r\n\r");
 
 	printf("\t\t");
-	for (REF_INDEX i = 0; i < refLength; i++) {
+	for (REF_INDEX i = 0; i < ref.length && i < 10; i++) {
 		if (i == 0)
 			printf("\t");
 		else
-			printf("%i\t", ref[i]);
+			printf("%i\t", ref.el[i]);
 	}
 	printf("\n\r");
 
 	printf("\t\t");
-	for (REF_INDEX i = 0; i < refLength; i++) {
+	for (REF_INDEX i = 0; i < ref.length && i < 10; i++) {
 		printf("--------");
 	}
 	printf("\n\r");
 
-	for (SEQ_INDEX i = 0; i < seqLength; i++) {
+	for (SEQ_INDEX i = 0; i < seq.length && i < 10; i++) {
 		if (i == 0)
 			printf("\t|\t");
 		else
-			printf("%i\t|\t", seq[i]);
+			printf("%i\t|\t", seq.el[i]);
 
-		for (REF_INDEX j = 0; j < refLength; j++) {
+		for (REF_INDEX j = 0; j < ref.length && j < 10; j++) {
 			printf("%i\t", matrix[coordToAddr(i, j)].value);
 		}
 		printf("\n\r");

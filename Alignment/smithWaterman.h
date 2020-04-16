@@ -4,12 +4,13 @@
 #include "displayForDebug.h"
 #include "../PARAMS.h"
 #include "../TYPES.h"
-#include "sds_lib.h" //for sds_alloc function
 
-void initSmithWaterman(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix);
+#include <stdio.h>//for sprintf function
+#include <string.h>//for strcat function
 
-CELL* smithWaterman(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
-		SEQ_INDEX seqLength, CELL matrix[refMax * seqMax]);
+void initMatrix(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix);
+
+CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]);
 
 //////////////////////
 //PRIVATE functions://
