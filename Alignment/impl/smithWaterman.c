@@ -49,10 +49,14 @@ CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
 	return &(matrix[coordToAddr(maxPos.row, maxPos.col)]);
 }
 
-void generateCIGAR(char* CIGAR, CELL* LL){
+void generateCIGAR(char* CIGARout, CELL* LL){
+	char* CIGAR;
 	SEQ_INDEX counter = 0;
 	char currentDirection = 'M';
-	CIGAR[0] = '\0'; //reset the string
+
+	char newCIGAR[buffSize];
+	newCIGAR[0] = '\0';
+	CIGAR = newCIGAR;
 
 	while(LL->prevCell != NULL){
 		POS prevPos = LL->prevCell->pos;
@@ -103,10 +107,12 @@ void generateCIGAR(char* CIGAR, CELL* LL){
 	}
 
 	//write last counted part also in string
-	char newCIGAR[buffSize];
 	sprintf(newCIGAR, "%i%c", counter, currentDirection);
 	strcat(newCIGAR, CIGAR);
 	CIGAR = newCIGAR;
+
+	//copy the cigar to the cigar in the struct;
+	strcpy(CIGARout, CIGAR);
 }
 
 //FILL THE CURRENT CELL => core of the algorithm
