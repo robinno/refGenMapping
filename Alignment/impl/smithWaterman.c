@@ -15,10 +15,9 @@ void initMatrix(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix) {
 }
 
 CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
-
-	//FILLIN
 	CELL_VALUE max = 0;
 	POS maxPos; //position of the maximum value in the matrix
+
 	for (SEQ_INDEX row = 1; row <= seq.length; row++) {
 		for (REF_INDEX col = 1; col <= ref.length; col++) {
 
@@ -49,71 +48,6 @@ CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
 	return &(matrix[coordToAddr(maxPos.row, maxPos.col)]);
 }
 
-void generateCIGAR(char* CIGARout, CELL* LL){
-	char* CIGAR;
-	SEQ_INDEX counter = 0;
-	char currentDirection = 'M';
-
-	char newCIGAR[buffSize];
-	newCIGAR[0] = '\0';
-	CIGAR = newCIGAR;
-
-	while(LL->prevCell != NULL){
-		POS prevPos = LL->prevCell->pos;
-		POS currPos = LL->pos;
-
-		if(prevPos.col == currPos.col - 1 && prevPos.row == currPos.row - 1){//diagonal = match
-			if(currentDirection == 'M'){
-				counter++;
-			}else{
-				//write in buffer
-				char newCIGAR[buffSize];
-				sprintf(newCIGAR, "%i%c", counter, currentDirection);
-				strcat(newCIGAR, CIGAR);
-				CIGAR = newCIGAR;
-
-				counter = 1;
-				currentDirection = 'M';
-			}
-		} else if(prevPos.col == currPos.col && prevPos.row == currPos.row - 1){//up = insertion
-			if(currentDirection == 'I'){
-				counter++;
-			}else{
-				//write in buffer
-				char newCIGAR[buffSize];
-				sprintf(newCIGAR, "%i%c", counter, currentDirection);
-				strcat(newCIGAR, CIGAR);
-				CIGAR = newCIGAR;
-
-				counter = 1;
-				currentDirection = 'I';
-						}
-		} else {//left = deletion
-			if(currentDirection == 'D'){
-				counter++;
-			}else{
-				//write in buffer
-				char newCIGAR[buffSize];
-				sprintf(newCIGAR, "%i%c", counter, currentDirection);
-				strcat(newCIGAR, CIGAR);
-				CIGAR = newCIGAR;
-
-				counter = 1;
-				currentDirection = 'D';
-			}
-		}
-
-		LL = LL->prevCell;
-	}
-
-	//write last counted part also in string
-	sprintf(newCIGAR, "%i%c", counter, currentDirection);
-	strcat(newCIGAR, CIGAR);
-	CIGAR = newCIGAR;
-
-	//copy the cigar to the cigar in the struct;
-	strcpy(CIGARout, CIGAR);
-}
 
 //FILL THE CURRENT CELL => core of the algorithm
 CELL generateCell(CELL* diagonal, CELL* left, CELL* up, BASE refVal,

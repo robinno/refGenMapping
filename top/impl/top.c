@@ -6,7 +6,8 @@ int top() {
 	SAM_LINE samLine;
 
 	//RESERVE MEMORY
-	initSeq(&(fastQLine.seq.el));
+	BASE *addrSpaceReverseSeq = 0;
+	initSeq(&(fastQLine.seq.el), &addrSpaceReverseSeq);
 	initRef(&(fastaLine.ref.el));
 	CELL *addrSpaceMatrix = 0;
 	initAlignMatrixAddrSpace(&addrSpaceMatrix);
@@ -28,15 +29,13 @@ int top() {
 	int allReadsDone = 0;
 	do {
 		allReadsDone = readNextFastqLine(fastQfile, &fastQLine);
-		displayCurrFASTQline(fastQLine);
+		displayCurrFASTQline(fastQLine); //debug
+		samLine.fastQLine = fastQLine;
 
 		//PERFORM MAPPING
-		CELL* maxCell = FillInMatrix(fastaLine.ref, fastQLine.seq, addrSpaceMatrix);
+		align(fastaLine, fastQLine, &samLine, addrSpaceMatrix, addrSpaceReverseSeq);
 
-		generateCIGAR(samLine.CIGAR, maxCell);
-
-		samLine.fastQLine = fastQLine;
-		displayCurrSAMline(samLine);
+		displayCurrSAMline(samLine); //debug
 		writeSamLine(samFile, samLine);
 	} while (allReadsDone != 255);
 

@@ -1,13 +1,17 @@
 #include "../initMem.h"
 
-int initSeq(BASE** seq) {
+int initSeq(BASE** LRseq, BASE** RLseq) {
 	//in physical memory
-	*seq = (BASE *) sds_alloc(sizeof(BASE) * seqMax);
+	*LRseq = (BASE *) sds_alloc(sizeof(BASE) * seqMax);
+	*RLseq = (BASE *) sds_alloc(sizeof(BASE) * seqMax);
 
-	if (seq) {
-		sds_free(seq);
+	if (LRseq) {
+		sds_free(LRseq);
 		return -1;
-	} else {
+	} else if (RLseq){
+		sds_free(RLseq);
+		return -1;
+	} else{
 		return 0;
 	}
 }

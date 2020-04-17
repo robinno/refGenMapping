@@ -6,7 +6,7 @@
 
 #include "sds_lib.h" //for sds_alloc function
 
-int initSeq(BASE** seq);
+int initSeq(BASE** LRseq, BASE** RLseq);
 int initRef(BASE** ref);
 int initAlignMatrixAddrSpace(CELL** matrix);
 
