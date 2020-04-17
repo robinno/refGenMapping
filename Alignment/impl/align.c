@@ -113,12 +113,15 @@ void generateCIGAR(char* CIGARout, CELL* LL){
 		}
 
 		LL = LL->prevCell;
+
+		printf("row: %i\tcol: %i\tdirection: %c\tcounter:%i\tCIGAR: %s\n", currPos.row, currPos.col, currentDirection, counter, CIGAR);
 	}
 
 	//write last counted part also in string
-	sprintf(newCIGAR, "%i%c", counter, currentDirection);
-	strcat(newCIGAR, CIGAR);
-	CIGAR = newCIGAR;
+	char nCIGAR[buffSize];
+	sprintf(nCIGAR, "%i%c", counter, currentDirection);
+	strcat(nCIGAR, CIGAR);
+	CIGAR = nCIGAR;
 
 	//copy the cigar to the cigar in the struct;
 	strcpy(CIGARout, CIGAR);
