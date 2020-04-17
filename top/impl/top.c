@@ -29,7 +29,7 @@ int top() {
 	int allReadsDone = 0;
 	do {
 		allReadsDone = readNextFastqLine(fastQfile, &fastQLine);
-		displayCurrFASTQline(fastQLine); //debug
+		//displayCurrFASTQline(fastQLine); //debug
 		samLine.fastQLine = fastQLine;
 
 		//PERFORM MAPPING

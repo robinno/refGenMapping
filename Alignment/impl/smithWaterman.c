@@ -40,9 +40,9 @@ CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
 
 	//////////////////
 	//DEBUG PURPOSES//
-	displayMatrix(ref, seq, matrix);
-	displayMax(maxPos, max);
-	displayLL(&(matrix[coordToAddr(maxPos.row, maxPos.col)]));
+//	displayMatrix(ref, seq, matrix);
+//	displayMax(maxPos, max);
+//	displayLL(&(matrix[coordToAddr(maxPos.row, maxPos.col)]));
 	//////////////////
 
 	return &(matrix[coordToAddr(maxPos.row, maxPos.col)]);

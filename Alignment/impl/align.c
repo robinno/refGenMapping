@@ -3,7 +3,7 @@
 void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine, CELL* addrSpaceMatrix, BASE* addrSpaceReverseSeq){
 
 	//left to right
-	printf("left to right alignment: \n\n");
+	//printf("left to right alignment: \n\n");
 	CELL* maxCell = FillInMatrix(fastaLine.ref, fastqLine.seq, addrSpaceMatrix);
 	CELL_VALUE maxVal = maxCell->value;
 
@@ -19,7 +19,7 @@ void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine, CELL* 
 	reverseSeq(fastqLine.seq, &revSeq, addrSpaceReverseSeq);
 
 	//right to left
-	printf("right to left alignment: \n\n");
+	//printf("right to left alignment: \n\n");
 	maxCell = FillInMatrix(fastaLine.ref, revSeq, addrSpaceMatrix);
 	if(maxCell->value > maxVal){
 		printf("choosing the reverse alignment as the better one\n");
@@ -114,7 +114,7 @@ void generateCIGAR(char* CIGARout, CELL* LL){
 
 		LL = LL->prevCell;
 
-		printf("row: %i\tcol: %i\tdirection: %c\tcounter:%i\tCIGAR: %s\n", currPos.row, currPos.col, currentDirection, counter, CIGAR);
+		//printf("row: %i\tcol: %i\tdirection: %c\tcounter:%i\tCIGAR: %s\n", currPos.row, currPos.col, currentDirection, counter, CIGAR);
 	}
 
 	//write last counted part also in string
