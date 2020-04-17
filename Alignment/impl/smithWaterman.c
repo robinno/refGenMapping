@@ -16,7 +16,7 @@ void initMatrix(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix) {
 
 CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
 	CELL_VALUE max = 0;
-	POS maxPos; //position of the maximum value in the matrix
+	POS maxPos = {0,0}; //position of the maximum value in the matrix
 
 	for (SEQ_INDEX row = 1; row <= seq.length; row++) {
 		for (REF_INDEX col = 1; col <= ref.length; col++) {
@@ -102,5 +102,5 @@ CELL_VALUE sim(BASE a, BASE b) {
 
 //translating coordinates to address
 MATRIX_INDEX coordToAddr(SEQ_INDEX row, REF_INDEX column) {
-	return (row * refMax + column);
+	return (((MATRIX_INDEX) row) * refMax + (MATRIX_INDEX) column);
 }
