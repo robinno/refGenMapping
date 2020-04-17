@@ -12,7 +12,7 @@ void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine, CELL* 
 
 	while(maxCell->prevCell != NULL)
 		maxCell = maxCell->prevCell;
-	samLine->Pos = maxCell->pos.col;
+	samLine->Pos = maxCell->pos.col + 1;
 	samLine->Flag = 0;
 
 	SEQ revSeq;
@@ -29,7 +29,7 @@ void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine, CELL* 
 
 		while(maxCell->prevCell != NULL)
 				maxCell = maxCell->prevCell;
-		samLine->Pos = maxCell->pos.col;
+		samLine->Pos = maxCell->pos.col + 1;
 		samLine->Flag = 16;
 	}
 
