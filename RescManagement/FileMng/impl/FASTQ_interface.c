@@ -81,7 +81,7 @@ int readSeq(FILE* fp, SEQ* seq){
 		}
 	}
 
-	seq->length = i - 1;
+	seq->length = i;
 
 	return 0;
 }

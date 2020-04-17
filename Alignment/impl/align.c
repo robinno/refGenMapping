@@ -46,16 +46,30 @@ void reverseSeq(SEQ LeftToRight, SEQ* RightToLeft, BASE* addrSpaceReverseSeq){
 
 void generateCIGAR(char* CIGARout, CELL* LL){
 	char* CIGAR;
-	SEQ_INDEX counter = 0;
-	char currentDirection = 'M';
 
 	char newCIGAR[buffSize];
 	newCIGAR[0] = '\0';
 	CIGAR = newCIGAR;
+	SEQ_INDEX counter = 0;
+	char currentDirection;
+
+	POS prevPos = LL->prevCell->pos;
+	POS currPos = LL->pos;
+
+	if(prevPos.col == currPos.col - 1 && prevPos.row == currPos.row - 1){//diagonal = match
+		//M
+		currentDirection = 'M';
+	} else if(prevPos.col == currPos.col && prevPos.row == currPos.row - 1){//up = insertion
+		//I
+		currentDirection = 'I';
+	} else {//left = deletion
+		//D
+		currentDirection = 'D';
+	}
 
 	while(LL->prevCell != NULL){
-		POS prevPos = LL->prevCell->pos;
-		POS currPos = LL->pos;
+		prevPos = LL->prevCell->pos;
+		currPos = LL->pos;
 
 		if(prevPos.col == currPos.col - 1 && prevPos.row == currPos.row - 1){//diagonal = match
 			if(currentDirection == 'M'){
