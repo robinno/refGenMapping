@@ -44,12 +44,13 @@ void reverseSeq(SEQ LeftToRight, SEQ* RightToLeft, BASE* addrSpaceReverseSeq){
 	}
 }
 
-void generateCIGAR(char* CIGARout, CELL* LL){
-	char* CIGAR;
+void generateCIGAR(char* CIGAR, CELL* LL){
+	char ipCIGAR[buffSize];
+	char ipCIGAR_temp[buffSize];
 
-	char newCIGAR[buffSize];
-	newCIGAR[0] = '\0';
-	CIGAR = newCIGAR;
+	ipCIGAR[0] = '\0';
+	ipCIGAR_temp[0] = '\0';
+
 	SEQ_INDEX counter = 0;
 	char currentDirection;
 
@@ -57,13 +58,10 @@ void generateCIGAR(char* CIGARout, CELL* LL){
 	POS currPos = LL->pos;
 
 	if(prevPos.col == currPos.col - 1 && prevPos.row == currPos.row - 1){//diagonal = match
-		//M
 		currentDirection = 'M';
 	} else if(prevPos.col == currPos.col && prevPos.row == currPos.row - 1){//up = insertion
-		//I
 		currentDirection = 'I';
 	} else {//left = deletion
-		//D
 		currentDirection = 'D';
 	}
 
@@ -75,11 +73,10 @@ void generateCIGAR(char* CIGARout, CELL* LL){
 			if(currentDirection == 'M'){
 				counter++;
 			}else{
-				//write in buffer
-				char newCIGAR[buffSize];
-				sprintf(newCIGAR, "%i%c", counter, currentDirection);
-				strcat(newCIGAR, CIGAR);
-				CIGAR = newCIGAR;
+				sprintf(ipCIGAR_temp, "%i%c", counter, currentDirection);
+				strcat(ipCIGAR_temp, ipCIGAR);
+				strcpy(ipCIGAR, ipCIGAR_temp);
+				ipCIGAR_temp[0] = '\0';
 
 				counter = 1;
 				currentDirection = 'M';
@@ -88,11 +85,10 @@ void generateCIGAR(char* CIGARout, CELL* LL){
 			if(currentDirection == 'I'){
 				counter++;
 			}else{
-				//write in buffer
-				char newCIGAR[buffSize];
-				sprintf(newCIGAR, "%i%c", counter, currentDirection);
-				strcat(newCIGAR, CIGAR);
-				CIGAR = newCIGAR;
+				sprintf(ipCIGAR_temp, "%i%c", counter, currentDirection);
+				strcat(ipCIGAR_temp, ipCIGAR);
+				strcpy(ipCIGAR, ipCIGAR_temp);
+				ipCIGAR_temp[0] = '\0';
 
 				counter = 1;
 				currentDirection = 'I';
@@ -101,11 +97,10 @@ void generateCIGAR(char* CIGARout, CELL* LL){
 			if(currentDirection == 'D'){
 				counter++;
 			}else{
-				//write in buffer
-				char newCIGAR[buffSize];
-				sprintf(newCIGAR, "%i%c", counter, currentDirection);
-				strcat(newCIGAR, CIGAR);
-				CIGAR = newCIGAR;
+				sprintf(ipCIGAR_temp, "%i%c", counter, currentDirection);
+				strcat(ipCIGAR_temp, ipCIGAR);
+				strcpy(ipCIGAR, ipCIGAR_temp);
+				ipCIGAR_temp[0] = '\0';
 
 				counter = 1;
 				currentDirection = 'D';
@@ -118,13 +113,12 @@ void generateCIGAR(char* CIGARout, CELL* LL){
 	}
 
 	//write last counted part also in string
-	char nCIGAR[buffSize];
-	sprintf(nCIGAR, "%i%c", counter, currentDirection);
-	strcat(nCIGAR, CIGAR);
-	CIGAR = nCIGAR;
+	sprintf(ipCIGAR_temp, "%i%c", counter, currentDirection);
+	strcat(ipCIGAR_temp, ipCIGAR);
+	strcpy(ipCIGAR, ipCIGAR_temp);
+	ipCIGAR_temp[0] = '\0';
 
-	//copy the cigar to the cigar in the struct;
-	strcpy(CIGARout, CIGAR);
+	strcpy(CIGAR, ipCIGAR);
 }
 
 void generateMapQ(uint8_t* mapQ, CELL_VALUE max_value, SEQ_INDEX seqLength){
