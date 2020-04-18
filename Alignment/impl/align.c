@@ -16,6 +16,8 @@ void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine,
 			maxCell = maxCell->prevCell;
 		samLine->Pos = maxCell->pos.col + 1;
 		samLine->Flag = 0;
+
+		strcpy(samLine->fastALine.Rname, fastaLine.Rname);
 	}
 
 	SEQ revSeq;
@@ -39,13 +41,15 @@ void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine,
 				maxCell = maxCell->prevCell;
 			samLine->Pos = maxCell->pos.col + 1;
 			samLine->Flag = 16;
-		} else{
-			 //unmatched
+
+			strcpy(samLine->fastALine.Rname, fastaLine.Rname);
+		} else {
+			//unmatched
 			samLine->Flag = 4;
-			samLine->fastALine.Rname = '*';
+			strcpy(samLine->fastALine.Rname, "*\0");
 			samLine->Pos = 0;
 			samLine->MapQ = 0;
-			samLine->CIGAR = "*\0";
+			strcpy(samLine->CIGAR, "*\0");
 		}
 	}
 
@@ -62,7 +66,7 @@ void reverseSeq(SEQ LeftToRight, SEQ* RightToLeft, BASE* addrSpaceReverseSeq) {
 
 int generateCIGAR(char* CIGAR, CELL* LL) {
 	*CIGAR = '\0';
-	uint8_t mutationCounter = 1;
+	uint8_t cigarPartsCounter = 1;
 
 	char ipCIGAR[buffSize];
 	char ipCIGAR_temp[buffSize];
@@ -92,8 +96,8 @@ int generateCIGAR(char* CIGAR, CELL* LL) {
 			if (currentDirection == 'M') {
 				counter++;
 			} else {
-				mutationCounter++;
-				if (mutationCounter >= maxMutations)
+				cigarPartsCounter++;
+				if (cigarPartsCounter >= maxCigarParts)
 					return -1;
 
 				sprintf(ipCIGAR_temp, "%i%c", counter, currentDirection);
@@ -109,7 +113,8 @@ int generateCIGAR(char* CIGAR, CELL* LL) {
 			if (currentDirection == 'I') {
 				counter++;
 			} else {
-				if (mutationCounter >= maxMutations)
+				cigarPartsCounter++;
+				if (cigarPartsCounter >= maxCigarParts)
 					return -1;
 
 				sprintf(ipCIGAR_temp, "%i%c", counter, currentDirection);
@@ -124,7 +129,8 @@ int generateCIGAR(char* CIGAR, CELL* LL) {
 			if (currentDirection == 'D') {
 				counter++;
 			} else {
-				if (mutationCounter >= maxMutations)
+				cigarPartsCounter++;
+				if (cigarPartsCounter >= maxCigarParts)
 					return -1;
 
 				sprintf(ipCIGAR_temp, "%i%c", counter, currentDirection);
@@ -139,8 +145,8 @@ int generateCIGAR(char* CIGAR, CELL* LL) {
 
 		LL = LL->prevCell;
 
-		printf("row: %i\tcol: %i\tdirection: %c\tcounter:%i\tCIGAR: %s\n",
-				currPos.row, currPos.col, currentDirection, counter, ipCIGAR);
+		//printf("row: %i\tcol: %i\tdirection: %c\tcounter:%i\tCIGAR: %s\n",
+		//		currPos.row, currPos.col, currentDirection, counter, ipCIGAR);
 	}
 
 	//write last counted part also in string
