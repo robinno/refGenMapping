@@ -4,53 +4,63 @@ void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine,
 		CELL* addrSpaceMatrix, BASE* addrSpaceReverseSeq) {
 
 	//left to right
-	printf("left to right alignment: \n\n");
-	CELL* maxCell = FillInMatrix(fastaLine.ref, fastqLine.seq, addrSpaceMatrix);
-	CELL_VALUE maxVal = maxCell->value;
+//	printf("left to right alignment: \n\n");
+	CELL* maxCellLR = FillInMatrix(fastaLine.ref, fastqLine.seq,
+			addrSpaceMatrix);
+	CELL_VALUE maxVal = maxCellLR->value;
 
-	int retValueLR = generateCIGAR(samLine->CIGAR, maxCell);
+	int retValueLR = generateCIGAR(samLine->CIGAR, maxCellLR);
 	if (retValueLR == 0) {
 		generateMapQ(&(samLine->MapQ), maxVal, fastqLine.seq.length);
 
-		while (maxCell->prevCell != NULL)
-			maxCell = maxCell->prevCell;
-		samLine->Pos = maxCell->pos.col + 1;
+		while (maxCellLR->prevCell != NULL)
+			maxCellLR = maxCellLR->prevCell;
+		samLine->Pos = maxCellLR->pos.col + 1;
 		samLine->Flag = 0;
 
-		strcpy(samLine->fastALine.Rname, fastaLine.Rname);
+		strcpy(samLine->Rname, fastaLine.Rname);
 	}
 
 	SEQ revSeq;
 	reverseSeq(fastqLine.seq, &revSeq, addrSpaceReverseSeq);
 
-	printf("%i\n", revSeq.length);
+//	printf("revSeq: ");
+//	for(int i = 0; i < revSeq.length; i++){
+//		printf("%i", revSeq.el[i]);
+//	}
+//	printf("\n");
+//	printf("revSeq length: %i\n", revSeq.length);
 
 	//right to left
-	printf("right to left alignment: \n\n");
-	maxCell = FillInMatrix(fastaLine.ref, revSeq, addrSpaceMatrix);
+//	printf("right to left alignment: \n\n");
+	CELL* maxCellRL = FillInMatrix(fastaLine.ref, revSeq, addrSpaceMatrix);
 
-	if (maxCell->value > maxVal) {
-		printf("choosing the reverse alignment as the better one\n");
-		maxVal = maxCell->value;
-		int retValueRL = generateCIGAR(samLine->CIGAR, maxCell);
+	int retValueRL = -1;
+
+	if (maxCellRL->value > maxVal) {
+//		printf("choosing the reverse alignment as the better one\n");
+		maxVal = maxCellRL->value;
+		retValueRL = generateCIGAR(samLine->CIGAR, maxCellRL);
 
 		if (retValueRL == 0) {
 			generateMapQ(&(samLine->MapQ), maxVal, fastqLine.seq.length);
 
-			while (maxCell->prevCell != NULL)
-				maxCell = maxCell->prevCell;
-			samLine->Pos = maxCell->pos.col + 1;
+			while (maxCellRL->prevCell != NULL)
+				maxCellRL = maxCellRL->prevCell;
+			samLine->Pos = maxCellRL->pos.col + 1;
 			samLine->Flag = 16;
 
-			strcpy(samLine->fastALine.Rname, fastaLine.Rname);
-		} else {
-			//unmatched
-			samLine->Flag = 4;
-			strcpy(samLine->fastALine.Rname, "*\0");
-			samLine->Pos = 0;
-			samLine->MapQ = 0;
-			strcpy(samLine->CIGAR, "*\0");
+			strcpy(samLine->Rname, fastaLine.Rname);
 		}
+	}
+
+	if(retValueLR != 0 && retValueRL != 0){
+		//unmatched
+		samLine->Flag = 4;
+		strcpy(samLine->Rname, "*\0");
+		samLine->Pos = 0;
+		samLine->MapQ = 0;
+		strcpy(samLine->CIGAR, "*\0");
 	}
 
 }
@@ -65,12 +75,12 @@ void reverseSeq(SEQ LeftToRight, SEQ* RightToLeft, BASE* addrSpaceReverseSeq) {
 }
 
 int generateCIGAR(char* CIGAR, CELL* LL) {
-	*CIGAR = '\0';
 	uint8_t cigarPartsCounter = 1;
-
 	char ipCIGAR[buffSize];
 	char ipCIGAR_temp[buffSize];
 
+	//reset all strings
+	*CIGAR = '\0';
 	ipCIGAR[0] = '\0';
 	ipCIGAR_temp[0] = '\0';
 
@@ -145,8 +155,8 @@ int generateCIGAR(char* CIGAR, CELL* LL) {
 
 		LL = LL->prevCell;
 
-		//printf("row: %i\tcol: %i\tdirection: %c\tcounter:%i\tCIGAR: %s\n",
-		//		currPos.row, currPos.col, currentDirection, counter, ipCIGAR);
+//		printf("row: %i\tcol: %i\tdirection: %c\tcounter:%i\tCIGAR: %s\n",
+				currPos.row, currPos.col, currentDirection, counter, ipCIGAR);
 	}
 
 	//write last counted part also in string

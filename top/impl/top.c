@@ -15,7 +15,6 @@ int top() {
 	//LOAD THE REF
 	loadRef(fastaPath, &fastaLine);
 	displayFASTAline(fastaLine);
-	samLine.fastALine = fastaLine;
 
 	//OPEN THE FILES:
 	FILE* fastQfile = fopen(fastQPath, "r");
@@ -26,17 +25,22 @@ int top() {
 
 	/////////////////////////////////
 
+	int counter = 1;
+
 	int allReadsDone = 0;
 	do {
 		allReadsDone = readNextFastqLine(fastQfile, &fastQLine);
 		//displayCurrFASTQline(fastQLine); //debug
 		samLine.fastQLine = fastQLine;
 
+		printf("%i° sequence: %s\n", counter, fastQLine.Qname);
+
 		//PERFORM MAPPING
 		align(fastaLine, fastQLine, &samLine, addrSpaceMatrix, addrSpaceReverseSeq);
 
 		displayCurrSAMline(samLine); //debug
 		writeSamLine(samFile, samLine);
+		counter++;
 	} while (allReadsDone != 255);
 
 	/////////////////////////////////

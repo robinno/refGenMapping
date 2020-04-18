@@ -32,7 +32,7 @@ struct FASTA_LINE{
 
 typedef struct FASTQ_LINE FASTQ_LINE;
 struct FASTQ_LINE{
-	char Qname[255];
+	char Qname[buffSize];
 	SEQ seq;
 	char qualities[seqMax];
 };
@@ -43,7 +43,7 @@ struct SAM_LINE{
 	FASTQ_LINE fastQLine;
 
 	//info from FASTA line
-	FASTA_LINE fastALine;
+	char Rname[buffSize];
 
 	//mapping results
 	uint16_t Flag;

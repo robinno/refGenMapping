@@ -11,7 +11,7 @@ void displaySamLine(SAM_LINE samLine){
 
 	printf("%s\t", samLine.fastQLine.Qname);
 	printf("%i\t", samLine.Flag);
-	printf("%s\t", samLine.fastALine.Rname);
+	printf("%s\t", samLine.Rname);
 	printf("%i\t", samLine.Pos);
 	printf("%i\t", samLine.MapQ);
 	printf("%s\t", samLine.CIGAR);
@@ -34,7 +34,7 @@ void writeSamLine(FILE* fp, SAM_LINE samLine){
 
 	fprintf(fp, "%s\t", samLine.fastQLine.Qname);
 	fprintf(fp, "%i\t", samLine.Flag);
-	fprintf(fp, "%s\t", samLine.fastALine.Rname);
+	fprintf(fp, "%s\t", samLine.Rname);
 	fprintf(fp, "%i\t", samLine.Pos);
 	fprintf(fp, "%i\t", samLine.MapQ);
 	fprintf(fp, "%s\t", samLine.CIGAR);
