@@ -12,6 +12,7 @@
 //PARAMETERS FOR THE ALIGNMENT
 #define gp 2 	//gap penalty
 #define s 3		//similarity score
+#define maxMutations 15 //the maximum amount of mutations in a sequence (otherwise gets thrown away)
 
 //BUFFER SIZES
 #define refMax 6000 	//maximum length of the reference genome (BUFFER SIZE)

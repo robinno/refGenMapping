@@ -11,7 +11,6 @@
 void initMatrix(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix);
 
 CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]);
-void generateCIGAR(char* CIGARout, CELL* LL);
 
 //////////////////////
 //PRIVATE functions://
