@@ -20,25 +20,37 @@ int top() {
 	FILE* fastQfile = fopen(fastQPath, "r");
 	FILE* samFile = fopen(samPath, "w+");
 
+	if(fastQfile == NULL || samFile == NULL){
+		printf("ERROR: Files didn't open correctly");
+		fclose(fastQfile);
+		fclose(samFile);
+		sds_free(fastQLine.seq.el);
+		sds_free(fastaLine.ref.el);
+		sds_free(addrSpaceMatrix);
+
+		return -1;
+	}
+
 	//INIT THE SW MATRIX:
 	initMatrix(refMax, seqMax, addrSpaceMatrix);
 
 	/////////////////////////////////
 
 	int counter = 1;
+	FASTQ_LINE revFastQ;
 
 	int allReadsDone = 0;
 	do {
 		allReadsDone = readNextFastqLine(fastQfile, &fastQLine);
 		//displayCurrFASTQline(fastQLine); //debug
-		samLine.fastQLine = fastQLine;
-
-		printf("%i° sequence: %s\n", counter, fastQLine.Qname);
 
 		//PERFORM MAPPING
-		align(fastaLine, fastQLine, &samLine, addrSpaceMatrix, addrSpaceReverseSeq);
+		FASTQ_LINE* fastQ = align(fastaLine, &fastQLine, &samLine, addrSpaceMatrix, addrSpaceReverseSeq, &revFastQ);
+		samLine.fastQLine = *fastQ;
 
-		displayCurrSAMline(samLine); //debug
+		//displayCurrSAMline(samLine); //debug
+		printf("%i: sequence: %s\t => flag: %i\n", counter, fastQLine.Qname, samLine.Flag);
+
 		writeSamLine(samFile, samLine);
 		counter++;
 	} while (allReadsDone != 255);
@@ -48,6 +60,7 @@ int top() {
 	//CLOSE THE FILES
 	fclose(fastQfile);
 	fclose(samFile);
+	printf("files saved\n");
 
 	//FREE THE MEMORY
 	sds_free(fastQLine.seq.el);

@@ -1,17 +1,19 @@
 #include "../align.h"
 
-void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine,
-		CELL* addrSpaceMatrix, BASE* addrSpaceReverseSeq) {
+FASTQ_LINE* align(FASTA_LINE fastaLine, FASTQ_LINE* fastqLine, SAM_LINE* samLine,
+		CELL* addrSpaceMatrix, BASE* addrSpaceReverseSeq, FASTQ_LINE* revFastQ) {
+
+	FASTQ_LINE* returnFastQ = fastqLine;
 
 	//left to right
 //	printf("left to right alignment: \n\n");
-	CELL* maxCellLR = FillInMatrix(fastaLine.ref, fastqLine.seq,
+	CELL* maxCellLR = FillInMatrix(fastaLine.ref, fastqLine->seq,
 			addrSpaceMatrix);
 	CELL_VALUE maxVal = maxCellLR->value;
 
 	int retValueLR = generateCIGAR(samLine->CIGAR, maxCellLR);
 	if (retValueLR == 0) {
-		generateMapQ(&(samLine->MapQ), maxVal, fastqLine.seq.length);
+		generateMapQ(&(samLine->MapQ), maxVal, fastqLine->seq.length);
 
 		while (maxCellLR->prevCell != NULL)
 			maxCellLR = maxCellLR->prevCell;
@@ -21,19 +23,9 @@ void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine,
 		strcpy(samLine->Rname, fastaLine.Rname);
 	}
 
-	SEQ revSeq;
-	reverseSeq(fastqLine.seq, &revSeq, addrSpaceReverseSeq);
+	reverseSeq(*fastqLine, revFastQ, addrSpaceReverseSeq);
 
-//	printf("revSeq: ");
-//	for(int i = 0; i < revSeq.length; i++){
-//		printf("%i", revSeq.el[i]);
-//	}
-//	printf("\n");
-//	printf("revSeq length: %i\n", revSeq.length);
-
-	//right to left
-//	printf("right to left alignment: \n\n");
-	CELL* maxCellRL = FillInMatrix(fastaLine.ref, revSeq, addrSpaceMatrix);
+	CELL* maxCellRL = FillInMatrix(fastaLine.ref, revFastQ->seq, addrSpaceMatrix);
 
 	int retValueRL = -1;
 
@@ -43,7 +35,7 @@ void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine,
 		retValueRL = generateCIGAR(samLine->CIGAR, maxCellRL);
 
 		if (retValueRL == 0) {
-			generateMapQ(&(samLine->MapQ), maxVal, fastqLine.seq.length);
+			generateMapQ(&(samLine->MapQ), maxVal, fastqLine->seq.length);
 
 			while (maxCellRL->prevCell != NULL)
 				maxCellRL = maxCellRL->prevCell;
@@ -51,10 +43,13 @@ void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine,
 			samLine->Flag = 16;
 
 			strcpy(samLine->Rname, fastaLine.Rname);
+
+			//use reverse fastqLine
+			returnFastQ = revFastQ;
 		}
 	}
 
-	if(retValueLR != 0 && retValueRL != 0){
+	if (retValueLR != 0 && retValueRL != 0) {
 		//unmatched
 		samLine->Flag = 4;
 		strcpy(samLine->Rname, "*\0");
@@ -63,14 +58,34 @@ void align(FASTA_LINE fastaLine, FASTQ_LINE fastqLine, SAM_LINE* samLine,
 		strcpy(samLine->CIGAR, "*\0");
 	}
 
+	return returnFastQ;
 }
 
-void reverseSeq(SEQ LeftToRight, SEQ* RightToLeft, BASE* addrSpaceReverseSeq) {
-	RightToLeft->length = LeftToRight.length;
-	RightToLeft->el = addrSpaceReverseSeq;
+void reverseSeq(FASTQ_LINE LeftToRight, FASTQ_LINE* RightToLeft, BASE* addrSpaceReverseSeq) {
+	strcpy(RightToLeft->Qname, LeftToRight.Qname);
 
-	for (SEQ_INDEX i = 0; i < LeftToRight.length; i++) {
-		RightToLeft->el[i] = LeftToRight.el[LeftToRight.length - i - 1];
+	RightToLeft->seq.length = LeftToRight.seq.length;
+	RightToLeft->seq.el = addrSpaceReverseSeq;
+
+	//reverse AND complementary base
+
+	for (SEQ_INDEX i = 0; i < LeftToRight.seq.length; i++) {
+		RightToLeft->qualities[i] = LeftToRight.qualities[LeftToRight.seq.length - i - 1];
+		BASE b = LeftToRight.seq.el[LeftToRight.seq.length - i - 1];
+		switch (b) {
+		case 1:
+			RightToLeft->seq.el[i] = 4;
+			break;
+		case 2:
+			RightToLeft->seq.el[i] = 3;
+			break;
+		case 3:
+			RightToLeft->seq.el[i] = 2;
+			break;
+		case 4:
+			RightToLeft->seq.el[i] = 1;
+			break;
+		}
 	}
 }
 
@@ -156,7 +171,7 @@ int generateCIGAR(char* CIGAR, CELL* LL) {
 		LL = LL->prevCell;
 
 //		printf("row: %i\tcol: %i\tdirection: %c\tcounter:%i\tCIGAR: %s\n",
-				currPos.row, currPos.col, currentDirection, counter, ipCIGAR);
+//				currPos.row, currPos.col, currentDirection, counter, ipCIGAR);
 	}
 
 	//write last counted part also in string
