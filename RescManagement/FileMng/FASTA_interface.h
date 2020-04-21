@@ -6,12 +6,10 @@
 #include "../../TYPES.h"
 #include "ConversionFunctions.h" //for the charToBase function
 
-
-void loadRef(char* filePath, FASTA_LINE* fastaLine);
+void loadGenome(char* filePath, GENOME* genome);
 
 //private functions
 void loadGenomeInfo(FILE* fp, char* qname);
 void loadRefData(FILE* fp, REF* ref);
-
 
 #endif

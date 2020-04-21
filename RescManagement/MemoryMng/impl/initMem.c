@@ -8,10 +8,10 @@ int initSeq(BASE** LRseq, BASE** RLseq) {
 	if (LRseq) {
 		sds_free(LRseq);
 		return -1;
-	} else if (RLseq){
+	} else if (RLseq) {
 		sds_free(RLseq);
 		return -1;
-	} else{
+	} else {
 		return 0;
 	}
 }

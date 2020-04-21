@@ -1,57 +1,59 @@
 #include "../top.h"
 
 int top() {
-	FASTQ_LINE fastQLine;
-	FASTA_LINE fastaLine;
-	SAM_LINE samLine;
+	READ read;
+	GENOME genome;
+	MAPPED_READ mapped_read;
 
 	//RESERVE MEMORY
 	BASE *addrSpaceReverseSeq = 0;
-	initSeq(&(fastQLine.seq.el), &addrSpaceReverseSeq);
-	initRef(&(fastaLine.ref.el));
+	initSeq(&(read.seq.el), &addrSpaceReverseSeq);
+	initRef(&(genome.ref.el));
 	CELL *addrSpaceMatrix = 0;
 	initAlignMatrixAddrSpace(&addrSpaceMatrix);
 
+	//INIT THE SW MATRIX:
+	initMatrix(refMax, seqMax, addrSpaceMatrix);
+
 	//LOAD THE REF
-	loadRef(fastaPath, &fastaLine);
-	displayFASTAline(fastaLine);
+	loadGenome(fastaPath, &genome);
+	displayGenomeInfo(genome);
 
 	//OPEN THE FILES:
 	FILE* fastQfile = fopen(fastQPath, "r");
 	FILE* samFile = fopen(samPath, "w+");
 
-	if(fastQfile == NULL || samFile == NULL){
+	if (fastQfile == NULL || samFile == NULL) {
 		printf("ERROR: Files didn't open correctly");
 		fclose(fastQfile);
 		fclose(samFile);
-		sds_free(fastQLine.seq.el);
-		sds_free(fastaLine.ref.el);
+		sds_free(read.seq.el);
+		sds_free(genome.ref.el);
 		sds_free(addrSpaceMatrix);
 
 		return -1;
 	}
 
-	//INIT THE SW MATRIX:
-	initMatrix(refMax, seqMax, addrSpaceMatrix);
-
 	/////////////////////////////////
 
 	int counter = 1;
-	FASTQ_LINE revFastQ;
+	READ revRead;
 
 	int allReadsDone = 0;
 	do {
-		allReadsDone = readNextFastqLine(fastQfile, &fastQLine);
-		//displayCurrFASTQline(fastQLine); //debug
+		allReadsDone = loadNextRead(fastQfile, &read);
+		//displayCurrReadInfo(read); //debug
 
 		//PERFORM MAPPING
-		FASTQ_LINE* fastQ = align(fastaLine, &fastQLine, &samLine, addrSpaceMatrix, addrSpaceReverseSeq, &revFastQ);
-		samLine.fastQLine = *fastQ;
+		READ* returnedRead = align(genome, &read, &mapped_read, addrSpaceMatrix,
+				addrSpaceReverseSeq, &revRead);
+		mapped_read.read = *returnedRead;
 
-		//displayCurrSAMline(samLine); //debug
-		printf("%i: sequence: %s\t => flag: %i\n", counter, fastQLine.Qname, samLine.Flag);
+		//displayCurrMappedReadInfo(mapped_read); //debug
+		printf("%i: sequence: %s\t => flag: %i\n", counter, read.Qname,
+				mapped_read.Flag);
 
-		writeSamLine(samFile, samLine);
+		writeSamLine(samFile, mapped_read);
 		counter++;
 	} while (allReadsDone != 255);
 
@@ -63,8 +65,8 @@ int top() {
 	printf("files saved\n");
 
 	//FREE THE MEMORY
-	sds_free(fastQLine.seq.el);
-	sds_free(fastaLine.ref.el);
+	sds_free(read.seq.el);
+	sds_free(genome.ref.el);
 	sds_free(addrSpaceMatrix);
 
 	return 0;

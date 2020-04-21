@@ -1,46 +1,46 @@
 #include "../displayInfo.h"
 
-void displayFASTAline(FASTA_LINE fastaLine){
+void displayGenomeInfo(GENOME genome) {
 	printf("the reference genome:\n");
-	printf("Rname: %s\n", fastaLine.Rname);
-	printf("length of reference: %i\n", fastaLine.ref.length);
+	printf("Rname: %s\n", genome.Rname);
+	printf("length of reference: %i\n", genome.ref.length);
 	printf("\n");
 }
 
-void displayCurrFASTQline(FASTQ_LINE fastqLine){
+void displayCurrReadInfo(READ read) {
 	printf("The current sequence:\n");
-	printf("Qname: %s\n", fastqLine.Qname);
+	printf("Qname: %s\n", read.Qname);
 	printf("Sequence: \t");
-	for(SEQ_INDEX i = 0; i < fastqLine.seq.length; i++){
-		printf("%i", fastqLine.seq.el[i]);
+	for (SEQ_INDEX i = 0; i < read.seq.length; i++) {
+		printf("%i", read.seq.el[i]);
 	}
 	printf("\n");
-	printf("Length of sequence: %i\n", (int) fastqLine.seq.length);
+	printf("Length of sequence: %i\n", (int) read.seq.length);
 	printf("Qualities: \t");
-	for(SEQ_INDEX i = 0; i < fastqLine.seq.length; i++){
-		printf("%c", fastqLine.qualities[i]);
+	for (SEQ_INDEX i = 0; i < read.seq.length; i++) {
+		printf("%c", read.qualities[i]);
 	}
 	printf("\n\n");
 }
 
-void displayCurrSAMline(SAM_LINE samLine){
+void displayCurrMappedReadInfo(MAPPED_READ mapped_read) {
 	printf("The current sequence (mapped):\n");
-	printf("Qname: %s\n", samLine.fastQLine.Qname);
+	printf("Qname: %s\n", mapped_read.read.Qname);
 	printf("Sequence: \t");
-	for(SEQ_INDEX i = 0; i < samLine.fastQLine.seq.length; i++){
-		printf("%i", samLine.fastQLine.seq.el[i]);
+	for (SEQ_INDEX i = 0; i < mapped_read.read.seq.length; i++) {
+		printf("%i", mapped_read.read.seq.el[i]);
 	}
 	printf("\n");
-	printf("Length of sequence: %i\n", (int) samLine.fastQLine.seq.length);
+	printf("Length of sequence: %i\n", (int) mapped_read.read.seq.length);
 	printf("Qualities: \t");
-	for(SEQ_INDEX i = 0; i < samLine.fastQLine.seq.length; i++){
-		printf("%c", samLine.fastQLine.qualities[i]);
+	for (SEQ_INDEX i = 0; i < mapped_read.read.seq.length; i++) {
+		printf("%c", mapped_read.read.qualities[i]);
 	}
 	printf("\n");
-	printf("Flag: %i\n", samLine.Flag);
-	printf("Position found: %i\n", samLine.Pos);
-	printf("Mapping qualitiy: %i\n", samLine.MapQ);
-	printf("CIGAR string: %s\n", samLine.CIGAR);
+	printf("Flag: %i\n", mapped_read.Flag);
+	printf("Position found: %i\n", mapped_read.Pos);
+	printf("Mapping qualitiy: %i\n", mapped_read.MapQ);
+	printf("CIGAR string: %s\n", mapped_read.CIGAR);
 
 	printf("\n\n");
 }

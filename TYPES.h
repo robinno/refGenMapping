@@ -5,42 +5,48 @@
 
 #include "PARAMS.h"
 
+//define the bases:
+#define A 0b00
+#define C 0b01
+#define G 0b10
+#define T 0b11
+
 typedef uint8_t BASE;			//data type for base (A, C, G or T)
 typedef uint16_t REF_INDEX;		//data type for index of the reference
 typedef uint16_t SEQ_INDEX;		//data type for index of the reference
-typedef uint32_t MATRIX_INDEX; 	//indexing the alignment matrix => ref_index size * seq_index size
+typedef uint32_t MATRIX_INDEX; //indexing the alignment matrix => ref_index size * seq_index size
 
 //SEQ and REF array types
 typedef struct SEQ SEQ;
-struct SEQ{
+struct SEQ {
 	BASE* el;
 	SEQ_INDEX length;
 };
 
 typedef struct REF REF;
-struct REF{
+struct REF {
 	BASE* el;
 	REF_INDEX length;
 };
 
 //FILE_IO types:
-typedef struct FASTA_LINE FASTA_LINE;
-struct FASTA_LINE{
+typedef struct GENOME GENOME;
+struct GENOME {
 	char Rname[buffSize];
 	REF ref;
 };
 
-typedef struct FASTQ_LINE FASTQ_LINE;
-struct FASTQ_LINE{
+typedef struct READ READ;
+struct READ {
 	char Qname[buffSize];
 	SEQ seq;
 	char qualities[seqMax];
 };
 
-typedef struct SAM_LINE SAM_LINE;
-struct SAM_LINE{
+typedef struct MAPPED_READ MAPPED_READ;
+struct MAPPED_READ {
 	//info from FASTQ line:
-	FASTQ_LINE fastQLine;
+	READ read;
 
 	//info from FASTA line
 	char Rname[buffSize];

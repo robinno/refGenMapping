@@ -1,30 +1,29 @@
 #include "../FASTA_interface.h"
 
-void loadRef(char* filePath, FASTA_LINE* fastaLine) {
-
+void loadGenome(char* filePath, GENOME* genome) {
 	FILE* refFile = fopen(filePath, "r");
 
-	loadGenomeInfo(refFile, fastaLine->Rname);
-	loadRefData(refFile, &(fastaLine->ref));
+	loadGenomeInfo(refFile, genome->Rname);
+	loadRefData(refFile, &(genome->ref));
 
 	fclose(refFile);
 }
 
 void loadGenomeInfo(FILE* fp, char* qname) { //=first line of file
-	fgetc(fp);//skip the first @ in stream
+	fgetc(fp); //skip the first @ in stream
 	int i = 0;
 	char read;
 	int stoploop = 0;
-	while(stoploop == 0){
+	while (stoploop == 0) {
 		read = fgetc(fp);
 
-		if(read == ' ' || read == '\n'){
-			while(read != '\n'){ //Get to next line of stream if it was a space
+		if (read == ' ' || read == '\n') {
+			while (read != '\n') { //Get to next line of stream if it was a space
 				read = fgetc(fp);
 			}
 			qname[i] = '\0';
 			return;
-		}else{
+		} else {
 			qname[i] = read;
 			i++;
 		}

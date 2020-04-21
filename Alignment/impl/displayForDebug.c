@@ -9,10 +9,10 @@ void displayMatrix(REF ref, SEQ seq, CELL matrix[seqMax * refMax]) {
 
 	printf("\t\t");
 	for (REF_INDEX i = 0; i <= ref.length && i < 15; i++) {
-		if(i == 0)
+		if (i == 0)
 			printf("\t");
 		else
-			printf("%i\t", ref.el[i-1]);
+			printf("%i\t", ref.el[i - 1]);
 	}
 	printf("\n\r");
 

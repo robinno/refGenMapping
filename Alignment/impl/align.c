@@ -1,67 +1,66 @@
 #include "../align.h"
 
-FASTQ_LINE* align(FASTA_LINE fastaLine, FASTQ_LINE* fastqLine, SAM_LINE* samLine,
-		CELL* addrSpaceMatrix, BASE* addrSpaceReverseSeq, FASTQ_LINE* revFastQ) {
+READ* align(GENOME genome, READ* read, MAPPED_READ* mapped_read,
+		CELL* addrSpaceMatrix, BASE* addrSpaceReverseSeq, READ* revRead) {
 
-	FASTQ_LINE* returnFastQ = fastqLine;
+	READ* returnRead = read;
 
 	//left to right
 //	printf("left to right alignment: \n\n");
-	CELL* maxCellLR = FillInMatrix(fastaLine.ref, fastqLine->seq,
-			addrSpaceMatrix);
+	CELL* maxCellLR = FillInMatrix(genome.ref, read->seq, addrSpaceMatrix);
 	CELL_VALUE maxVal = maxCellLR->value;
 
-	int retValueLR = generateCIGAR(samLine->CIGAR, maxCellLR);
+	int retValueLR = generateCIGAR(mapped_read->CIGAR, maxCellLR);
 	if (retValueLR == 0) {
-		generateMapQ(&(samLine->MapQ), maxVal, fastqLine->seq.length);
+		generateMapQ(&(mapped_read->MapQ), maxVal, read->seq.length);
 
 		while (maxCellLR->prevCell != NULL)
 			maxCellLR = maxCellLR->prevCell;
-		samLine->Pos = maxCellLR->pos.col + 1;
-		samLine->Flag = 0;
+		mapped_read->Pos = maxCellLR->pos.col + 1;
+		mapped_read->Flag = 0;
 
-		strcpy(samLine->Rname, fastaLine.Rname);
+		strcpy(mapped_read->Rname, genome.Rname);
 	}
 
-	reverseSeq(*fastqLine, revFastQ, addrSpaceReverseSeq);
+	reverseSeq(*read, revRead, addrSpaceReverseSeq);
 
-	CELL* maxCellRL = FillInMatrix(fastaLine.ref, revFastQ->seq, addrSpaceMatrix);
+	CELL* maxCellRL = FillInMatrix(genome.ref, revRead->seq, addrSpaceMatrix);
 
 	int retValueRL = -1;
 
 	if (maxCellRL->value > maxVal) {
 //		printf("choosing the reverse alignment as the better one\n");
 		maxVal = maxCellRL->value;
-		retValueRL = generateCIGAR(samLine->CIGAR, maxCellRL);
+		retValueRL = generateCIGAR(mapped_read->CIGAR, maxCellRL);
 
 		if (retValueRL == 0) {
-			generateMapQ(&(samLine->MapQ), maxVal, fastqLine->seq.length);
+			generateMapQ(&(mapped_read->MapQ), maxVal, read->seq.length);
 
 			while (maxCellRL->prevCell != NULL)
 				maxCellRL = maxCellRL->prevCell;
-			samLine->Pos = maxCellRL->pos.col + 1;
-			samLine->Flag = 16;
+			mapped_read->Pos = maxCellRL->pos.col + 1;
+			mapped_read->Flag = 16;
 
-			strcpy(samLine->Rname, fastaLine.Rname);
+			strcpy(mapped_read->Rname, genome.Rname);
 
-			//use reverse fastqLine
-			returnFastQ = revFastQ;
+			//use reverse read
+			returnRead = revRead;
 		}
 	}
 
 	if (retValueLR != 0 && retValueRL != 0) {
 		//unmatched
-		samLine->Flag = 4;
-		strcpy(samLine->Rname, "*\0");
-		samLine->Pos = 0;
-		samLine->MapQ = 0;
-		strcpy(samLine->CIGAR, "*\0");
+		mapped_read->Flag = 4;
+		strcpy(mapped_read->Rname, "*\0");
+		mapped_read->Pos = 0;
+		mapped_read->MapQ = 0;
+		strcpy(mapped_read->CIGAR, "*\0");
 	}
 
-	return returnFastQ;
+	return returnRead;
 }
 
-void reverseSeq(FASTQ_LINE LeftToRight, FASTQ_LINE* RightToLeft, BASE* addrSpaceReverseSeq) {
+void reverseSeq(READ LeftToRight, READ* RightToLeft, BASE* addrSpaceReverseSeq) {
 	strcpy(RightToLeft->Qname, LeftToRight.Qname);
 
 	RightToLeft->seq.length = LeftToRight.seq.length;
@@ -70,20 +69,21 @@ void reverseSeq(FASTQ_LINE LeftToRight, FASTQ_LINE* RightToLeft, BASE* addrSpace
 	//reverse AND complementary base
 
 	for (SEQ_INDEX i = 0; i < LeftToRight.seq.length; i++) {
-		RightToLeft->qualities[i] = LeftToRight.qualities[LeftToRight.seq.length - i - 1];
+		RightToLeft->qualities[i] = LeftToRight.qualities[LeftToRight.seq.length
+				- i - 1];
 		BASE b = LeftToRight.seq.el[LeftToRight.seq.length - i - 1];
 		switch (b) {
-		case 1:
-			RightToLeft->seq.el[i] = 4;
+		case A:
+			RightToLeft->seq.el[i] = T;
 			break;
-		case 2:
-			RightToLeft->seq.el[i] = 3;
+		case C:
+			RightToLeft->seq.el[i] = G;
 			break;
-		case 3:
-			RightToLeft->seq.el[i] = 2;
+		case G:
+			RightToLeft->seq.el[i] = C;
 			break;
-		case 4:
-			RightToLeft->seq.el[i] = 1;
+		case T:
+			RightToLeft->seq.el[i] = T;
 			break;
 		}
 	}

@@ -1,7 +1,11 @@
-#include <stdio.h>
+#ifndef DISPLAYINFO_H
+#define DISPLAYINFO_H
 
+#include <stdio.h>
 #include "../TYPES.h"
 
-void displayFASTAline(FASTA_LINE fastaLine);
-void displayCurrFASTQline(FASTQ_LINE fastqLine);
-void displayCurrSAMline(SAM_LINE samLine);
+void displayGenomeInfo(GENOME genome);
+void displayCurrReadInfo(READ read);
+void displayCurrMappedReadInfo(MAPPED_READ mapped_read);
+
+#endif

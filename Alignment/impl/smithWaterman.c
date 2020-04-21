@@ -16,7 +16,7 @@ void initMatrix(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix) {
 
 CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
 	CELL_VALUE max = 0;
-	POS maxPos = {0,0}; //position of the maximum value in the matrix
+	POS maxPos = { 0, 0 }; //position of the maximum value in the matrix
 
 	for (SEQ_INDEX row = 1; row <= seq.length; row++) {
 		for (REF_INDEX col = 1; col <= ref.length; col++) {
@@ -24,10 +24,8 @@ CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
 			CELL newCell = generateCell(
 					&(matrix[coordToAddr(row - 1, col - 1)]),
 					&(matrix[coordToAddr(row, col - 1)]),
-					&(matrix[coordToAddr(row - 1, col)]),
-					ref.el[col-1],
-					seq.el[row-1],
-					(POS ) { row, col });
+					&(matrix[coordToAddr(row - 1, col)]), ref.el[col - 1],
+					seq.el[row - 1], (POS ) { row, col });
 
 			if (newCell.value > max) {
 				maxPos = (POS ) { row, col };
@@ -47,7 +45,6 @@ CELL* FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
 
 	return &(matrix[coordToAddr(maxPos.row, maxPos.col)]);
 }
-
 
 //FILL THE CURRENT CELL => core of the algorithm
 CELL generateCell(CELL* diagonal, CELL* left, CELL* up, BASE refVal,
