@@ -36,15 +36,6 @@ void displayMatrix(REF ref, SEQ seq, CELL matrix[seqMax * refMax]) {
 	printf("\n\r\n\r");
 }
 
-void displayLL(CELL* cell) {
-	if (cell->prevCell == NULL) {
-		printf("%i (%i,%i)\n\r", cell->value, cell->pos.row, cell->pos.col);
-		return;
-	}
-	printf("%i (%i,%i) -> ", cell->value, cell->pos.row, cell->pos.col);
-	displayLL(cell->prevCell);
-}
-
 void displayMax(POS maxPos, CELL_VALUE max) {
 	printf("Position of maximum = row %i, column %i => with maximum %i\n\r\n\r",
 			maxPos.row, maxPos.col, max);

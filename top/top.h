@@ -15,6 +15,7 @@
 #include "../Alignment/smithWaterman.h" 			//for the alignment
 #include "../Alignment/align.h"
 
+
 #include "displayInfo.h"							//for feedback to the user via command line
 
 int top();

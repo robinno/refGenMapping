@@ -4,19 +4,24 @@ READ* align(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 		CELL* addrSpaceMatrix, BASE* addrSpaceReverseSeq, READ* revRead) {
 
 	READ* returnRead = read;
+	CELL* matrix = addrSpaceMatrix;
 
 	//left to right
 //	printf("left to right alignment: \n\n");
-	CELL* maxCellLR = FillInMatrix(genome.ref, read->seq, addrSpaceMatrix);
-	CELL_VALUE maxVal = maxCellLR->value;
+	POS maxPosLR = FillInMatrix(genome.ref, read->seq, matrix);
+	CELL_VALUE maxVal =
+			matrix[coordToAddr(maxPosLR.row, maxPosLR.col)].value;
 
-	int retValueLR = generateCIGAR(mapped_read->CIGAR, maxCellLR);
+	int retValueLR = generateCIGAR(mapped_read->CIGAR, matrix, maxPosLR);
 	if (retValueLR == 0) {
 		generateMapQ(&(mapped_read->MapQ), maxVal, read->seq.length);
 
-		while (maxCellLR->prevCell != NULL)
-			maxCellLR = maxCellLR->prevCell;
-		mapped_read->Pos = maxCellLR->pos.col + 1;
+		POS pos = goToDirection(matrix, maxPosLR);
+		while (matrix[coordToAddr(pos.row, pos.col)].value != 0) {
+			pos = goToDirection(matrix, pos);
+		}
+
+		mapped_read->Pos = pos.col + 1;
 		mapped_read->Flag = 0;
 
 		strcpy(mapped_read->Rname, genome.Rname);
@@ -24,21 +29,24 @@ READ* align(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 
 	reverseSeq(*read, revRead, addrSpaceReverseSeq);
 
-	CELL* maxCellRL = FillInMatrix(genome.ref, revRead->seq, addrSpaceMatrix);
+	POS maxPosRL = FillInMatrix(genome.ref, revRead->seq, matrix);
 
 	int retValueRL = -1;
 
-	if (maxCellRL->value > maxVal) {
+	if (matrix[coordToAddr(maxPosRL.row, maxPosRL.col)].value > maxVal) {
 //		printf("choosing the reverse alignment as the better one\n");
-		maxVal = maxCellRL->value;
-		retValueRL = generateCIGAR(mapped_read->CIGAR, maxCellRL);
+		maxVal = matrix[coordToAddr(maxPosRL.row, maxPosRL.col)].value;
+		retValueRL = generateCIGAR(mapped_read->CIGAR, matrix, maxPosRL);
 
 		if (retValueRL == 0) {
 			generateMapQ(&(mapped_read->MapQ), maxVal, read->seq.length);
 
-			while (maxCellRL->prevCell != NULL)
-				maxCellRL = maxCellRL->prevCell;
-			mapped_read->Pos = maxCellRL->pos.col + 1;
+			POS pos = goToDirection(matrix, maxPosRL);
+			while (matrix[coordToAddr(pos.row, pos.col)].value != 0) {
+				pos = goToDirection(matrix, pos);
+			}
+
+			mapped_read->Pos = pos.col + 1;
 			mapped_read->Flag = 16;
 
 			strcpy(mapped_read->Rname, genome.Rname);
@@ -60,7 +68,8 @@ READ* align(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 	return returnRead;
 }
 
-void reverseSeq(READ LeftToRight, READ* RightToLeft, BASE* addrSpaceReverseSeq) {
+void reverseSeq(READ LeftToRight, READ* RightToLeft,
+		BASE* addrSpaceReverseSeq) {
 	strcpy(RightToLeft->Qname, LeftToRight.Qname);
 
 	RightToLeft->seq.length = LeftToRight.seq.length;
@@ -89,7 +98,7 @@ void reverseSeq(READ LeftToRight, READ* RightToLeft, BASE* addrSpaceReverseSeq) 
 	}
 }
 
-int generateCIGAR(char* CIGAR, CELL* LL) {
+int generateCIGAR(char* CIGAR, CELL* matrix, POS maxPos) {
 	uint8_t cigarPartsCounter = 1;
 	char ipCIGAR[buffSize];
 	char ipCIGAR_temp[buffSize];
@@ -100,82 +109,88 @@ int generateCIGAR(char* CIGAR, CELL* LL) {
 	ipCIGAR_temp[0] = '\0';
 
 	SEQ_INDEX counter = 0;
-	char currentDirection;
+	char currentDir;
 
-	POS prevPos = LL->prevCell->pos;
-	POS currPos = LL->pos;
+	POS pos = maxPos;
+	DIRECTION d = matrix[coordToAddr(pos.row, pos.col)].d;
 
-	if (prevPos.col == currPos.col - 1 && prevPos.row == currPos.row - 1) { //diagonal = match
-		currentDirection = 'M';
-	} else if (prevPos.col == currPos.col && prevPos.row == currPos.row - 1) { //up = insertion
-		currentDirection = 'I';
-	} else { //left = deletion
-		currentDirection = 'D';
+	switch (d) {
+	case 1: //diagonal: match
+		currentDir = 'M';
+		break;
+	case 2: //up : insertion
+		currentDir = 'I';
+		break;
+	case 3: //left: deletion
+		currentDir = 'D';
+		break;
 	}
 
-	while (LL->prevCell != NULL) {
-		prevPos = LL->prevCell->pos;
-		currPos = LL->pos;
-
-		if (prevPos.col == currPos.col - 1 && prevPos.row == currPos.row - 1) { //diagonal = match
-			if (currentDirection == 'M') {
+	while (d != 0) {
+		switch (d) {
+		case 1:
+			if (currentDir == 'M') {
 				counter++;
 			} else {
 				cigarPartsCounter++;
 				if (cigarPartsCounter >= maxCigarParts)
 					return -1;
 
-				sprintf(ipCIGAR_temp, "%i%c", counter, currentDirection);
+				sprintf(ipCIGAR_temp, "%i%c", counter, currentDir);
 				strcat(ipCIGAR_temp, ipCIGAR);
 				strcpy(ipCIGAR, ipCIGAR_temp);
 				ipCIGAR_temp[0] = '\0';
 
 				counter = 1;
-				currentDirection = 'M';
+				currentDir = 'M';
 			}
-		} else if (prevPos.col == currPos.col
-				&& prevPos.row == currPos.row - 1) { //up = insertion
-			if (currentDirection == 'I') {
+			pos = (POS) {pos.row - 1, pos.col - 1};
+			break;
+		case 2:
+			if (currentDir == 'I') {
 				counter++;
 			} else {
 				cigarPartsCounter++;
 				if (cigarPartsCounter >= maxCigarParts)
 					return -1;
 
-				sprintf(ipCIGAR_temp, "%i%c", counter, currentDirection);
+				sprintf(ipCIGAR_temp, "%i%c", counter, currentDir);
 				strcat(ipCIGAR_temp, ipCIGAR);
 				strcpy(ipCIGAR, ipCIGAR_temp);
 				ipCIGAR_temp[0] = '\0';
 
 				counter = 1;
-				currentDirection = 'I';
+				currentDir = 'I';
 			}
-		} else { //left = deletion
-			if (currentDirection == 'D') {
+			pos = (POS) {pos.row, pos.col - 1};
+			break;
+		case 3:
+			if (currentDir == 'D') {
 				counter++;
 			} else {
 				cigarPartsCounter++;
 				if (cigarPartsCounter >= maxCigarParts)
 					return -1;
 
-				sprintf(ipCIGAR_temp, "%i%c", counter, currentDirection);
+				sprintf(ipCIGAR_temp, "%i%c", counter, currentDir);
 				strcat(ipCIGAR_temp, ipCIGAR);
 				strcpy(ipCIGAR, ipCIGAR_temp);
 				ipCIGAR_temp[0] = '\0';
 
 				counter = 1;
-				currentDirection = 'D';
+				currentDir = 'D';
 			}
+			pos = (POS) {pos.row - 1, pos.col};
+			break;
 		}
-
-		LL = LL->prevCell;
-
 //		printf("row: %i\tcol: %i\tdirection: %c\tcounter:%i\tCIGAR: %s\n",
 //				currPos.row, currPos.col, currentDirection, counter, ipCIGAR);
+
+		d = matrix[coordToAddr(pos.row, pos.col)].d;
 	}
 
 	//write last counted part also in string
-	sprintf(ipCIGAR_temp, "%i%c", counter, currentDirection);
+	sprintf(ipCIGAR_temp, "%i%c", counter, currentDir);
 	strcat(ipCIGAR_temp, ipCIGAR);
 	strcpy(ipCIGAR, ipCIGAR_temp);
 	ipCIGAR_temp[0] = '\0';
@@ -191,4 +206,22 @@ void generateMapQ(uint8_t* mapQ, CELL_VALUE max_value, SEQ_INDEX seqLength) {
 	//max_value is between 0 and seqLength * s => rescale between 0 and 254
 
 	*mapQ = (uint8_t) ((((int) max_value) * 254) / (((int) seqLength) * s));
+}
+
+POS goToDirection(CELL* matrix, POS pos) {
+	switch (matrix[coordToAddr(pos.row, pos.col)].d) {
+	case 0:
+		printf("something went wrong when backtracking");
+		return (POS ) { 0, 0 } ;
+		break;
+	case 1:
+		return (POS ) { pos.row - 1, pos.col - 1 } ;
+		break;
+	case 2:
+		return (POS ) { pos.row, pos.col - 1 } ;
+		break;
+	case 3:
+		return (POS ) { pos.row - 1, pos.col } ;
+		break;
+	}
 }

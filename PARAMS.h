@@ -19,4 +19,10 @@
 #define seqMax 500		//maximum length of the sequence to match (BUFFER SIZE)
 #define buffSize 64		//for character buffers (strings), such as qname, rname, cigar, ...
 
+//define the bases:
+#define A 0b00
+#define C 0b01
+#define G 0b10
+#define T 0b11
+
 #endif
