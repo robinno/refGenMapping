@@ -5,7 +5,7 @@
 #include "../TYPES.h"
 #include "smithWaterman.h"
 
-READ* align(GENOME genome, READ* read, MAPPED_READ* mapped_read,
+void align(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 		CELL* addrSpaceMatrix, BASE* addrSpaceReverseSeq, READ* revRead);
 void reverseSeq(READ LeftToRight, READ* RightToLeft, BASE* addrSpaceReverseSeq);
 

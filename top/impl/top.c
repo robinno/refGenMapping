@@ -45,9 +45,8 @@ int top() {
 		//displayCurrReadInfo(read); //debug
 
 		//PERFORM MAPPING
-		READ* returnedRead = align(genome, &read, &mapped_read, addrSpaceMatrix,
+		align(genome, &read, &mapped_read, addrSpaceMatrix,
 				addrSpaceReverseSeq, &revRead);
-		mapped_read.read = *returnedRead;
 
 		//displayCurrMappedReadInfo(mapped_read); //debug
 		printf("%i: sequence: %s\t => flag: %i\n", counter, read.Qname,

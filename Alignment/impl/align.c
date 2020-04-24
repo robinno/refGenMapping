@@ -1,16 +1,15 @@
 #include "../align.h"
 
-READ* align(GENOME genome, READ* read, MAPPED_READ* mapped_read,
+void align(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 		CELL* addrSpaceMatrix, BASE* addrSpaceReverseSeq, READ* revRead) {
 
-	READ* returnRead = read;
+	mapped_read->read = *read;
 	CELL* matrix = addrSpaceMatrix;
 
 	//left to right
 //	printf("left to right alignment: \n\n");
 	POS maxPosLR = FillInMatrix(genome.ref, read->seq, matrix);
-	CELL_VALUE maxVal =
-			matrix[coordToAddr(maxPosLR.row, maxPosLR.col)].value;
+	CELL_VALUE maxVal = matrix[coordToAddr(maxPosLR.row, maxPosLR.col)].value;
 
 	int retValueLR = generateCIGAR(mapped_read->CIGAR, matrix, maxPosLR);
 	if (retValueLR == 0) {
@@ -52,7 +51,7 @@ READ* align(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 			strcpy(mapped_read->Rname, genome.Rname);
 
 			//use reverse read
-			returnRead = revRead;
+			mapped_read->read = *revRead;
 		}
 	}
 
@@ -64,12 +63,9 @@ READ* align(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 		mapped_read->MapQ = 0;
 		strcpy(mapped_read->CIGAR, "*\0");
 	}
-
-	return returnRead;
 }
 
-void reverseSeq(READ LeftToRight, READ* RightToLeft,
-		BASE* addrSpaceReverseSeq) {
+void reverseSeq(READ LeftToRight, READ* RightToLeft, BASE* addrSpaceReverseSeq) {
 	strcpy(RightToLeft->Qname, LeftToRight.Qname);
 
 	RightToLeft->seq.length = LeftToRight.seq.length;
@@ -109,7 +105,7 @@ int generateCIGAR(char* CIGAR, CELL* matrix, POS maxPos) {
 	ipCIGAR_temp[0] = '\0';
 
 	SEQ_INDEX counter = 0;
-	char currentDir;
+	char currentDir = '\0';
 
 	POS pos = maxPos;
 	DIRECTION d = matrix[coordToAddr(pos.row, pos.col)].d;
@@ -144,7 +140,7 @@ int generateCIGAR(char* CIGAR, CELL* matrix, POS maxPos) {
 				counter = 1;
 				currentDir = 'M';
 			}
-			pos = (POS) {pos.row - 1, pos.col - 1};
+			pos = (POS ) { pos.row - 1, pos.col - 1 };
 			break;
 		case 2:
 			if (currentDir == 'I') {
@@ -162,7 +158,7 @@ int generateCIGAR(char* CIGAR, CELL* matrix, POS maxPos) {
 				counter = 1;
 				currentDir = 'I';
 			}
-			pos = (POS) {pos.row, pos.col - 1};
+			pos = (POS ) { pos.row, pos.col - 1 };
 			break;
 		case 3:
 			if (currentDir == 'D') {
@@ -180,7 +176,7 @@ int generateCIGAR(char* CIGAR, CELL* matrix, POS maxPos) {
 				counter = 1;
 				currentDir = 'D';
 			}
-			pos = (POS) {pos.row - 1, pos.col};
+			pos = (POS ) { pos.row - 1, pos.col };
 			break;
 		}
 //		printf("row: %i\tcol: %i\tdirection: %c\tcounter:%i\tCIGAR: %s\n",
@@ -213,15 +209,15 @@ POS goToDirection(CELL* matrix, POS pos) {
 	case 0:
 		printf("something went wrong when backtracking");
 		return (POS ) { 0, 0 } ;
-		break;
-	case 1:
-		return (POS ) { pos.row - 1, pos.col - 1 } ;
-		break;
-	case 2:
-		return (POS ) { pos.row, pos.col - 1 } ;
-		break;
-	case 3:
-		return (POS ) { pos.row - 1, pos.col } ;
-		break;
-	}
-}
+				break;
+			case 1:
+				return (POS ) { pos.row - 1, pos.col - 1 } ;
+						break;
+					case 2:
+						return (POS ) { pos.row, pos.col - 1 } ;
+								break;
+							case 3:
+								return (POS ) { pos.row - 1, pos.col } ;
+										break;
+									}
+								}
