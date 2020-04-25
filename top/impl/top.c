@@ -21,12 +21,14 @@ int top() {
 
 	//OPEN THE FILES:
 	FILE* fastQfile = fopen(fastQPath, "r");
-	FILE* samFile = fopen(samPath, "w+");
+	FILE* samFileSW = fopen(samPathSW, "w+");
+	FILE* samFileHW = fopen(samPathHW, "w+");
 
-	if (fastQfile == NULL || samFile == NULL) {
+	if (fastQfile == NULL || samFileSW == NULL || samFileHW == NULL) {
 		printf("ERROR: Files didn't open correctly");
 		fclose(fastQfile);
-		fclose(samFile);
+		fclose(samFileSW);
+		fclose(samFileHW);
 		sds_free(read.seq.el);
 		sds_free(genome.ref.el);
 		sds_free(addrSpaceMatrix);
@@ -39,28 +41,55 @@ int top() {
 	int counter = 1;
 	READ revRead;
 
+	//performance counters:
+	perf_counter sw_ctr, hw_ctr;
+	PCreset(&sw_ctr);
+	PCreset(&hw_ctr);
+
 	int allReadsDone = 0;
 	do {
 		allReadsDone = loadNextRead(fastQfile, &read);
 		//displayCurrReadInfo(read); //debug
 
-		//PERFORM MAPPING
-		align(genome, &read, &mapped_read, addrSpaceMatrix,
-				addrSpaceReverseSeq, &revRead);
+		//SOFTWARE
+		PCstart(&sw_ctr);
+		align(genome, &read, &mapped_read, addrSpaceMatrix, addrSpaceReverseSeq,
+				&revRead);
+		PCstop(&sw_ctr);
 
 		//displayCurrMappedReadInfo(mapped_read); //debug
-		printf("%i: sequence: %s\t => flag: %i\n", counter, read.Qname,
+		printf("%i: in software => sequence: %s\t => flag: %i\n", counter, read.Qname,
 				mapped_read.Flag);
+		writeSamLine(samFileSW, mapped_read);
 
-		writeSamLine(samFile, mapped_read);
+		//HARDWARE
+		PCstart(&hw_ctr);
+		alignHW(genome, &read, &mapped_read, addrSpaceMatrix,
+				addrSpaceReverseSeq, &revRead);
+		PCstop(&hw_ctr);
+
+		//displayCurrMappedReadInfo(mapped_read); //debug
+		printf("%i: in hardware => sequence: %s\t => flag: %i\n", counter, read.Qname,
+				mapped_read.Flag);
+		writeSamLine(samFileHW, mapped_read);
+
 		counter++;
 	} while (allReadsDone != 255);
+
+	uint64_t sw_cycles = avg_cpu_cycles(sw_ctr);
+	uint64_t hw_cycles = avg_cpu_cycles(hw_ctr);
+	double speedup = (double) sw_cycles / (double) hw_cycles;
+
+	printf("Average number of CPU cycles running in software: %"PRIu64"\n", sw_cycles);
+	printf("Average number of CPU cycles running in hardware: %"PRIu64"\n", hw_cycles);
+	printf("speedup: %f\n", speedup);
 
 	/////////////////////////////////
 
 	//CLOSE THE FILES
 	fclose(fastQfile);
-	fclose(samFile);
+	fclose(samFileSW);
+	fclose(samFileHW);
 	printf("files saved\n");
 
 	//FREE THE MEMORY

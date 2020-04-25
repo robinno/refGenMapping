@@ -6,7 +6,8 @@
 
 //FILE PATHS
 #define fastQPath "/mnt/reads.fastq"
-#define samPath "/mnt/mapped.sam"
+#define samPathSW "/mnt/mappedSW.sam"
+#define samPathHW "/mnt/mappedHW.sam"
 #define fastaPath "/mnt/genome.fasta"
 
 //PARAMETERS FOR THE ALIGNMENT

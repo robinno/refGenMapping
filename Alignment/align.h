@@ -4,8 +4,12 @@
 #include "../PARAMS.h"
 #include "../TYPES.h"
 #include "smithWaterman.h"
+#include "smithWatermanHW.h"
 
 void align(GENOME genome, READ* read, MAPPED_READ* mapped_read,
+		CELL* addrSpaceMatrix, BASE* addrSpaceReverseSeq, READ* revRead);
+
+void alignHW(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 		CELL* addrSpaceMatrix, BASE* addrSpaceReverseSeq, READ* revRead);
 
 //PRIVATE FUNCTIONS:

@@ -3,6 +3,7 @@
 
 #include "sds_lib.h" 	//for memory free functions
 #include <stdio.h> 		//for the FILE type
+#include <inttypes.h> 	//to print weird types, like 64 bit integers
 
 #include "../PARAMS.h"								//including the parameters
 #include "../TYPES.h"								//including the types
@@ -17,6 +18,7 @@
 
 
 #include "displayInfo.h"							//for feedback to the user via command line
+#include "Perf_counter.h"
 
 int top();
 
