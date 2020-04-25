@@ -8,6 +8,6 @@
 #include <stdio.h>//for sprintf function
 #include <string.h>//for strcat function
 
-POS FillInMatrixHW(REF ref, SEQ seq, CELL matrix[refMax * seqMax]);
+void FillInMatrixHW(REF ref, SEQ seq, CELL matrix[refMax * seqMax], POS* maxPos);
 
 #endif
