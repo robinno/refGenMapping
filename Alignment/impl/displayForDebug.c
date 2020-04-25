@@ -1,5 +1,17 @@
 #include "../displayForDebug.h"
 
+//////////////////////
+//PRIVATE FUNCTIONS://
+
+
+//translating coordinates to address
+static inline MATRIX_INDEX coordToAddr(SEQ_INDEX row, REF_INDEX column) {
+	return (((MATRIX_INDEX) row) * refMax + (MATRIX_INDEX) column);
+}
+
+/////////////////////
+//PUBLIC FUNCTIONS://
+
 void displayMatrix(REF ref, SEQ seq, CELL matrix[seqMax * refMax]) {
 	printf("\n\r\n\r");
 
@@ -40,3 +52,4 @@ void displayMax(POS maxPos, CELL_VALUE max) {
 	printf("Position of maximum = row %i, column %i => with maximum %i\n\r\n\r",
 			maxPos.row, maxPos.col, max);
 }
+

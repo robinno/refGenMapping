@@ -1,57 +1,27 @@
 #include "../smithWaterman.h"
 
-void initMatrix(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix) {
-	//first row and first column of matrix = 0;
-	for (SEQ_INDEX row = 0; row < seqLength; row++) {
-		matrix[coordToAddr(row, 0)].value = 0;
-		matrix[coordToAddr(row, 0)].d = 0;
-	}
-	for (REF_INDEX col = 0; col < refLength; col++) {
-		matrix[coordToAddr(0, col)].value = 0;
-		matrix[coordToAddr(0, col)].d = 0;
-	}
+//////////////////////
+//PRIVATE FUNCTIONS://
+
+
+//similarity function
+static inline CELL_VALUE sim(BASE a, BASE b) {
+	return (a == b) ? s : -s;
 }
 
-POS FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
-	CELL_VALUE max = 0;
-	POS maxPos = { 0, 0 }; //position of the maximum value in the matrix
-
-	for (SEQ_INDEX row = 1; row <= seq.length; row++) {
-		for (REF_INDEX col = 1; col <= ref.length; col++) {
-
-			CELL Cell = generateCell(
-					&(matrix[coordToAddr(row - 1, col - 1)]),
-					&(matrix[coordToAddr(row, col - 1)]),
-					&(matrix[coordToAddr(row - 1, col)]), ref.el[col - 1],
-					seq.el[row - 1], (POS ) { row, col });
-
-			if (Cell.value > max) {
-				maxPos = (POS ) { row, col };
-				max = Cell.value;
-			}
-
-			matrix[coordToAddr(row, col)] = Cell;
-		}
-	}
-
-	//////////////////
-	//DEBUG PURPOSES//
-//	displayMatrix(ref, seq, matrix);
-//	displayMax(maxPos, max);
-	//displayLL(&(matrix[coordToAddr(maxPos.row, maxPos.col)]));
-	//////////////////
-
-	return maxPos;
+//translating coordinates to address
+static inline MATRIX_INDEX coordToAddr(SEQ_INDEX row, REF_INDEX column) {
+	return (((MATRIX_INDEX) row) * refMax + (MATRIX_INDEX) column);
 }
 
 //FILL THE CURRENT CELL => core of the algorithm
-CELL generateCell(CELL* diagonal, CELL* left, CELL* up, BASE refVal,
-		BASE seqVal, POS pos) {
+static inline CELL generateCell(CELL diagonal, CELL left, CELL up, BASE refVal,
+		BASE seqVal) {
 
 	//calculate the possible  values
-	CELL_VALUE diagonalVal = diagonal->value + sim(refVal, seqVal);
-	CELL_VALUE leftVal = left->value - gp;
-	CELL_VALUE upVal = up->value - gp;
+	CELL_VALUE diagonalVal = diagonal.value + sim(refVal, seqVal);
+	CELL_VALUE leftVal = left.value - gp;
+	CELL_VALUE upVal = up.value - gp;
 
 	//look for the maximum value:
 	CELL_VALUE values[] = { 0, diagonalVal, upVal, leftVal };
@@ -89,12 +59,55 @@ CELL generateCell(CELL* diagonal, CELL* left, CELL* up, BASE refVal,
 	return newCell;
 }
 
-//similarity function
-CELL_VALUE sim(BASE a, BASE b) {
-	return (a == b) ? s : -s;
+///////////////
+
+/////////////////////
+//PUBLIC FUNCTIONS://
+
+void initMatrix(REF_INDEX refLength, SEQ_INDEX seqLength, CELL* matrix) {
+	//first row and first column of matrix = 0;
+	for (SEQ_INDEX row = 0; row < seqLength; row++) {
+		matrix[coordToAddr(row, 0)].value = 0;
+		matrix[coordToAddr(row, 0)].d = 0;
+	}
+	for (REF_INDEX col = 0; col < refLength; col++) {
+		matrix[coordToAddr(0, col)].value = 0;
+		matrix[coordToAddr(0, col)].d = 0;
+	}
 }
 
-//translating coordinates to address
-MATRIX_INDEX coordToAddr(SEQ_INDEX row, REF_INDEX column) {
-	return (((MATRIX_INDEX) row) * refMax + (MATRIX_INDEX) column);
+POS FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
+	CELL_VALUE max = 0;
+	POS maxPos = { 0, 0 }; //position of the maximum value in the matrix
+
+	for (SEQ_INDEX row = 1; row <= seq.length; row++) {
+		for (REF_INDEX col = 1; col <= ref.length; col++) {
+
+			CELL Cell = generateCell(
+					matrix[coordToAddr(row - 1, col - 1)],
+					matrix[coordToAddr(row, col - 1)],
+					matrix[coordToAddr(row - 1, col)],
+					ref.el[col - 1],
+					seq.el[row - 1]
+			);
+
+			if (Cell.value > max) {
+				maxPos = (POS ) { row, col };
+				max = Cell.value;
+			}
+
+			matrix[coordToAddr(row, col)] = Cell;
+		}
+	}
+
+	//////////////////
+	//DEBUG PURPOSES//
+//	displayMatrix(ref, seq, matrix);
+//	displayMax(maxPos, max);
+	//displayLL(&(matrix[coordToAddr(maxPos.row, maxPos.col)]));
+	//////////////////
+
+	return maxPos;
 }
+
+

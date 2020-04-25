@@ -15,9 +15,9 @@ POS FillInMatrix(REF ref, SEQ seq, CELL matrix[refMax * seqMax]);
 //////////////////////
 //PRIVATE functions://
 
-CELL generateCell(CELL* diagonal, CELL* left, CELL* up, BASE refVal,
-		BASE seqVal, POS pos);
-CELL_VALUE sim(BASE a, BASE b);
-MATRIX_INDEX coordToAddr(SEQ_INDEX row, REF_INDEX column);
+//inline CELL generateCell(CELL diagonal, CELL left, CELL up, BASE refVal,
+//		BASE seqVal);
+//inline CELL_VALUE sim(BASE a, BASE b);
+//inline MATRIX_INDEX coordToAddr(SEQ_INDEX row, REF_INDEX column);
 
 #endif
