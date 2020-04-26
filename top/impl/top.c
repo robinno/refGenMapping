@@ -58,8 +58,8 @@ int top() {
 		PCstop(&sw_ctr);
 
 		//displayCurrMappedReadInfo(mapped_read); //debug
-		printf("%i: in software => sequence: %s\t => flag: %i\n", counter, read.Qname,
-				mapped_read.Flag);
+//		printf("%i: in software => sequence: %s\t => flag: %i\n", counter, read.Qname,
+//				mapped_read.Flag);
 		writeSamLine(samFileSW, mapped_read);
 
 		//HARDWARE
@@ -69,19 +69,21 @@ int top() {
 		PCstop(&hw_ctr);
 
 		//displayCurrMappedReadInfo(mapped_read); //debug
-		printf("%i: in hardware => sequence: %s\t => flag: %i\n", counter, read.Qname,
-				mapped_read.Flag);
+//		printf("%i: in hardware => sequence: %s\t => flag: %i\n", counter, read.Qname,
+//				mapped_read.Flag);
 		writeSamLine(samFileHW, mapped_read);
 
+		printf("%i: sequence: %s\t => flag: %i\n", counter, read.Qname, mapped_read.Flag);
 		counter++;
+		printf("current clock: %"PRIu64"\n", (uint64_t) sds_clock_counter());
 	} while (allReadsDone != 255);
 
-	uint64_t sw_cycles = avg_cpu_cycles(sw_ctr);
-	uint64_t hw_cycles = avg_cpu_cycles(hw_ctr);
+	unsigned long long sw_cycles = avg_cpu_cycles(sw_ctr);
+	unsigned long long hw_cycles = avg_cpu_cycles(hw_ctr);
 	double speedup = (double) sw_cycles / (double) hw_cycles;
 
-	printf("Average number of CPU cycles running in software: %"PRIu64"\n", sw_cycles);
-	printf("Average number of CPU cycles running in hardware: %"PRIu64"\n", hw_cycles);
+	printf("Average number of CPU cycles running in software: %llu\n", sw_cycles);
+	printf("Average number of CPU cycles running in hardware: %llu\n", hw_cycles);
 	printf("speedup: %f\n", speedup);
 
 	/////////////////////////////////
