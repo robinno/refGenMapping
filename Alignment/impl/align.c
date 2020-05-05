@@ -6,7 +6,7 @@
 
 //translating coordinates to address
 static inline MATRIX_INDEX coordToAddr(SEQ_INDEX row, REF_INDEX column) {
-	return (((MATRIX_INDEX) row) * refMax + (MATRIX_INDEX) column);
+	return (((MATRIX_INDEX) row) + (MATRIX_INDEX) column * seqMax);
 }
 
 
@@ -247,8 +247,7 @@ void alignHW(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 
 	//left to right
 	//	printf("left to right alignment: \n\n");
-	POS maxPosLR = {0,0};
-	FillInMatrixHW(genome.ref, read->seq, matrix, &maxPosLR);
+	POS maxPosLR = FillInMatrixHW(genome.ref, read->seq, matrix);
 	CELL_VALUE maxVal = matrix[coordToAddr(maxPosLR.row, maxPosLR.col)].value;
 
 	int retValueLR = generateCIGAR(mapped_read->CIGAR, matrix, maxPosLR);
@@ -268,8 +267,7 @@ void alignHW(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 
 	reverseSeq(*read, revRead, addrSpaceReverseSeq);
 
-	POS maxPosRL = {0,0};
-	FillInMatrixHW(genome.ref, revRead->seq, matrix, &maxPosRL);
+	POS maxPosRL = FillInMatrixHW(genome.ref, revRead->seq, matrix);
 
 	int retValueRL = -1;
 

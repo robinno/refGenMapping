@@ -1,5 +1,6 @@
 #include "../top.h"
 
+
 int top() {
 	READ read;
 	GENOME genome;
@@ -10,6 +11,7 @@ int top() {
 	initSeq(&(read.seq.el), &addrSpaceReverseSeq);
 	initRef(&(genome.ref.el));
 	CELL *addrSpaceMatrix = 0;
+	//#pragma HLS data_pack variable=addrSpaceMatrix struct_level //needed for hardware acceleration
 	initAlignMatrixAddrSpace(&addrSpaceMatrix);
 
 	//INIT THE SW MATRIX:

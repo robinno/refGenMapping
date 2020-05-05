@@ -10,7 +10,7 @@ static inline CELL_VALUE sim(BASE a, BASE b) {
 
 //translating coordinates to address
 static inline MATRIX_INDEX coordToAddr(SEQ_INDEX row, REF_INDEX column) {
-	return (((MATRIX_INDEX) row) * refMax + (MATRIX_INDEX) column);
+	return (((MATRIX_INDEX) row) + (MATRIX_INDEX) column * seqMax);
 }
 
 //FILL THE CURRENT CELL => core of the algorithm

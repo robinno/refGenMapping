@@ -58,8 +58,6 @@ struct MAPPED_READ {
 };
 
 //TYPES USED WITHIN ALIGNMENT
-typedef int CELL_VALUE;		//data type for values during the alignment
-
 typedef struct POS POS;	//data type to keep track of position in alignment matrix
 struct POS {
 	SEQ_INDEX row;
@@ -67,7 +65,8 @@ struct POS {
 };
 
 
-typedef uint8_t DIRECTION;
+typedef uint16_t DIRECTION;
+typedef int16_t CELL_VALUE;		//data type for values during the alignment
 
 typedef struct CELL CELL;//data type of a specific cell in the alignment matrix
 struct CELL {
