@@ -33,11 +33,12 @@ POS FillInHW2(REF ref, SEQ seq, CELL matrix[refMax * seqMax]) {
 	CELL_VALUE prevDiagonal[seqMax];
 	CELL_VALUE prevprevDiagonal[seqMax];
 
-	//init:
-	prevprevDiagonal[0] = 0;
-	prevDiagonal[0] = 0;
-	prevDiagonal[1] = 0;
-	currDiagonal[0] = 0;
+	//init all on zero:
+	for(SEQ_INDEX index = 0; index < seqMax; index++){
+		prevprevDiagonal[index] = 0;
+		prevDiagonal[index] = 0;
+		currDiagonal[index] = 0;
+	}
 
 	//start at second column:
 	for (REF_INDEX currCol = 2; currCol < refMax + seqMax; currCol++) {
