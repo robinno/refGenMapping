@@ -16,7 +16,7 @@
 #define maxCigarParts 15 //the maximum amount of parts in the CIGAR (otherwise sequence marked as unmatched)
 
 //BUFFER SIZES
-#define refMax 5400 	//maximum length of the reference genome (BUFFER SIZE)
+#define refMax 5700 	//maximum length of the reference genome (BUFFER SIZE)
 #define seqMax 160		//maximum length of the sequence to match (BUFFER SIZE)
 #define buffSize 64		//for character buffers (strings), such as qname, rname, cigar, ...
 
