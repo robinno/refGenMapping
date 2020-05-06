@@ -247,7 +247,7 @@ void alignHW(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 
 	//left to right
 	//	printf("left to right alignment: \n\n");
-	POS maxPosLR = FillInMatrixHW(genome.ref, read->seq, matrix);
+	POS maxPosLR = FillInHW2(genome.ref, read->seq, matrix);
 	CELL_VALUE maxVal = matrix[coordToAddr(maxPosLR.row, maxPosLR.col)].value;
 
 	int retValueLR = generateCIGAR(mapped_read->CIGAR, matrix, maxPosLR);
@@ -267,7 +267,7 @@ void alignHW(GENOME genome, READ* read, MAPPED_READ* mapped_read,
 
 	reverseSeq(*read, revRead, addrSpaceReverseSeq);
 
-	POS maxPosRL = FillInMatrixHW(genome.ref, revRead->seq, matrix);
+	POS maxPosRL = FillInHW2(genome.ref, revRead->seq, matrix);
 
 	int retValueRL = -1;
 
