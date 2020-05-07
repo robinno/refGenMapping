@@ -5,9 +5,7 @@
 //PUBLIC FUNCTIONS://
 MATRIX_INDEX FillInHW(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
 		SEQ_INDEX seqLength, CELL matrix[refMax * seqMax]) {
-
 #pragma HLS data_pack variable=matrix
-	//#pragma HLS PIPELINE
 
 	//maximum value searching:
 	CELL_VALUE currentMaxVal = 0;
@@ -20,7 +18,7 @@ MATRIX_INDEX FillInHW(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
 
 	//init all on zero:
 	for (SEQ_INDEX index = 0; index < seqMax; index++) {
-		#pragma HLS UNROLL
+#pragma HLS UNROLL
 		prevprevDiagonal[index] = 0;
 		prevDiagonal[index] = 0;
 		currDiagonal[index] = 0;
@@ -30,20 +28,15 @@ MATRIX_INDEX FillInHW(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
 	COL: for (MATRIX_INDEX currCol = 2; currCol < (refLength + seqLength);
 			currCol++) {
 #pragma HLS loop_tripcount min=5000 avg=5150 max=5700
+#pragma HLS loop_merge
 
 		//new diagonal generation loop
 		DIAG: for (SEQ_INDEX i = 1; i < seqMax; i++) {
-			#pragma HLS UNROLL
+#pragma HLS UNROLL
+			SEQ_INDEX row = i;
+			MATRIX_INDEX col = currCol - i;
 
-			if (i < seqLength) {
-				SEQ_INDEX row = i;
-				MATRIX_INDEX col = currCol - i;
-
-				//Edge cases
-				if (col == 0)
-					break;
-				if (col >= refLength)
-					continue; //still has to do the rest of the loops, since col will decrease.
+			if (i < seqLength && col != 0 && col <= refLength) { //no edge cases
 
 				/////////////////////
 				//Generation
@@ -80,7 +73,7 @@ MATRIX_INDEX FillInHW(BASE ref[refMax], REF_INDEX refLength, BASE seq[seqMax],
 
 		//shift values:
 		SHIFT: for (SEQ_INDEX j = 0; j < seqMax; j++) {
-			#pragma HLS UNROLL
+#pragma HLS UNROLL
 			prevprevDiagonal[j] = prevDiagonal[j];
 			prevDiagonal[j] = currDiagonal[j];
 		}
